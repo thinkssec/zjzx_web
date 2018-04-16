@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd"
+	   default-lazy-init="true">
+
+	<description>代码生成器组件</description>
+
+	<bean id="dbManager" class="com.slofzx.jbdf.base.code.DbManager"/>
+
+	<bean id="codeBuilder" class="com.slofzx.jbdf.base.code.CodeBuilder">
+		<property name="manager" ref="dbManager"/>
+		<!-- 代码输出目录 -->
+		<property name="dir" value="/Users/zhaoxuechao/Documents/src"/>
+		<!-- 基础包名 -->
+		<property name="basePackage" value="com.slofzx.jbdf.manager"/>
+		<!-- 表名,有两种设置方式
+			1 以,分割的字符串视逗号之间的内容为真实表名
+			2 不存在,的字符串按照模糊查询处理
+		-->
+		<property name="tables" value=""/>
+	</bean>
+</beans>

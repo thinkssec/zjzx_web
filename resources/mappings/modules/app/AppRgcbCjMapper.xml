@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- [app_rgcb_cj]SQLMapper自动映射 -->
+<!--  注意:此文件自动生成-禁止手工修改 2017-06-19 -->
+<mapper namespace="com.thinkgem.jeesite.modules.app.mapper.AppRgcbCjMapper">
+
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insert"  parameterType="AppRgcbCj">
+		INSERT INTO app_rgcb_cj (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{id, jdbcType=VARCHAR},  <!-- ${columnDto.comment} -->
+		    #{tjsj, jdbcType=VARCHAR},  <!-- ${columnDto.comment} -->
+		    #{dwdm, jdbcType=VARCHAR},  <!-- ${columnDto.comment} -->
+		    #{zsg, jdbcType=NUMERIC},  <!-- 正式工（万元/人?年） -->
+		    #{lwg, jdbcType=NUMERIC},  <!-- 劳务工（万元/人?年） -->
+		    #{sjd, jdbcType=VARCHAR},  <!-- 计算时间段 -->
+		    #{tjr, jdbcType=VARCHAR}  <!-- 提交人 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="AppRgcbCj">
+		UPDATE app_rgcb_cj
+		<set>
+			<if test="id != null">
+		          id = #{id, jdbcType=VARCHAR},  <!-- ${columnDto.comment} -->
+			</if>
+			<if test="tjsj != null">
+		          tjsj = #{tjsj, jdbcType=VARCHAR},  <!-- ${columnDto.comment} -->
+			</if>
+			<if test="dwdm != null">
+		          dwdm = #{dwdm, jdbcType=VARCHAR},  <!-- ${columnDto.comment} -->
+			</if>
+			<if test="zsg != null">
+		          zsg = #{zsg, jdbcType=NUMERIC},  <!-- 正式工（万元/人?年） -->
+			</if>
+			<if test="lwg != null">
+		          lwg = #{lwg, jdbcType=NUMERIC},  <!-- 劳务工（万元/人?年） -->
+			</if>
+			<if test="sjd != null">
+		          sjd = #{sjd, jdbcType=VARCHAR},  <!-- 计算时间段 -->
+			</if>
+			<if test="tjr != null">
+		          tjr = #{tjr, jdbcType=VARCHAR},  <!-- 提交人 -->
+			</if>
+		</set>
+		WHERE  tjsj = #{tjsj} AND dwdm = #{dwdm}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM app_rgcb_cj WHERE  tjsj = #{tjsj} AND dwdm = #{dwdm}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="AppRgcbCj">
+		SELECT
+		<include refid="column1" />
+		FROM app_rgcb_cj WHERE  tjsj = #{tjsj} AND dwdm = #{dwdm}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="hashmap" resultType="AppRgcbCj">
+        SELECT * FROM (
+		SELECT
+		    <include refid="column1" />
+		FROM app_rgcb_cj
+		<where>
+		    <include refid="equal" />
+		</where>
+        )
+        <![CDATA[
+		WHERE ROWNUM < 2
+		]]>
+	</select>
+
+	<!-- 根据param查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="hashmap" resultType="AppRgcbCj">
+		SELECT
+			<include refid="column1" />
+		FROM app_rgcb_cj
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据param查询并返回分页数据持久化对象集合 -->
+	<!--<select id="listPage" parameterType="hashmap" resultType="AppRgcbCj" useCache="false">
+        <include refid="com.slofzx.jbdf.base.BasicMapper.pageStart"/>
+	    SELECT
+			<include refid="column1" />
+		FROM app_rgcb_cj
+		<where>
+		    <include refid="equal" />
+		</where>
+        <include refid="com.slofzx.jbdf.base.BasicMapper.pageEnd"/>
+	</select>-->
+
+    <!-- 根据param查询并返回分页数据持久化对象集合 -->
+    <!--<select id="listPage2" parameterType="hashmap" resultType="AppRgcbCj" useCache="false">
+        <include refid="basic.pageStart"/>
+        SELECT
+        <include refid="column1" />
+        FROM app_rgcb_cj
+        <where>
+            <include refid="equal" />
+            <if test="mc != null and mc != ''">
+                AND mc like '%${mc}%'
+            </if>
+            <if test="kssj != null and kssj != ''">
+                AND to_char(rq,'yyyy-mm-dd') >= #{kssj}
+            </if>
+            <if test="jssj != null and jssj != ''">
+                AND to_char(rq,'yyyy-mm-dd') <![CDATA[ <= ]]> #{jssj}
+            </if>
+        </where>
+        <include refid="basic.pageEnd"/>
+    </select>-->
+
+    <select id="listPageCount" parameterType="hashmap" resultType="int" useCache="false">
+        SELECT
+         count(*) cn
+        FROM app_rgcb_cj
+        <where>
+            <include refid="equal" />
+			<if test="mc != null and mc != ''">
+				AND mc like '%${mc}%'
+			</if>
+			<if test="kssj != null and kssj != ''">
+				AND to_char(rq,'yyyy-mm-dd') >= #{kssj}
+			</if>
+			<if test="jssj != null and jssj != ''">
+				AND to_char(rq,'yyyy-mm-dd') <![CDATA[ <= ]]> #{jssj}
+			</if>
+        </where>
+    </select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  id ,  <!-- ${columnDto.comment} -->
+		  tjsj ,  <!-- ${columnDto.comment} -->
+		  dwdm ,  <!-- ${columnDto.comment} -->
+		  zsg ,  <!-- 正式工（万元/人?年） -->
+		  lwg ,  <!-- 劳务工（万元/人?年） -->
+		  sjd ,  <!-- 计算时间段 -->
+		  tjr   <!-- 提交人 -->
+	</sql>
+
+    <!-- 表字段 -->
+    <sql id="column1">
+					id as id ,  <!-- ${columnDto.comment} -->
+					tjsj as tjsj ,  <!-- ${columnDto.comment} -->
+					dwdm as dwdm ,  <!-- ${columnDto.comment} -->
+					zsg as zsg ,  <!-- 正式工（万元/人?年） -->
+					lwg as lwg ,  <!-- 劳务工（万元/人?年） -->
+					sjd as sjd ,  <!-- 计算时间段 -->
+					tjr as tjr   <!-- 提交人 -->
+		    </sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	    <if test="id != null and id != ''">
+
+		      AND id = #{id}  <!-- ${columnDto.comment} -->
+		</if>
+	    <if test="tjsj != null and tjsj != ''">
+
+		      AND tjsj = #{tjsj}  <!-- ${columnDto.comment} -->
+		</if>
+	    <if test="dwdm != null and dwdm != ''">
+
+		      AND dwdm = #{dwdm}  <!-- ${columnDto.comment} -->
+		</if>
+	   <if test="zsg != null ">
+		      AND zsg = #{zsg}  <!-- 正式工（万元/人?年） -->
+		</if>
+	   <if test="lwg != null ">
+		      AND lwg = #{lwg}  <!-- 劳务工（万元/人?年） -->
+		</if>
+	    <if test="sjd != null and sjd != ''">
+
+		      AND sjd = #{sjd}  <!-- 计算时间段 -->
+		</if>
+	    <if test="tjr != null and tjr != ''">
+
+		      AND tjr = #{tjr}  <!-- 提交人 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 -->
+	<sql id="like">
+	    <if test="id != null and id != ''">
+		      AND id like '%${id}%'  <!-- ${columnDto.comment} -->
+		</if>
+	    <if test="tjsj != null and tjsj != ''">
+		      AND tjsj like '%${tjsj}%'  <!-- ${columnDto.comment} -->
+		</if>
+	    <if test="dwdm != null and dwdm != ''">
+		      AND dwdm like '%${dwdm}%'  <!-- ${columnDto.comment} -->
+		</if>
+	    <if test="sjd != null and sjd != ''">
+		      AND sjd like '%${sjd}%'  <!-- 计算时间段 -->
+		</if>
+	    <if test="tjr != null and tjr != ''">
+		      AND tjr like '%${tjr}%'  <!-- 提交人 -->
+		</if>
+	</sql>
+	
+</mapper>

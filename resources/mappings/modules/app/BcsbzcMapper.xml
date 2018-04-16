@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.thinkgem.jeesite.modules.app.mapper.BcsbzcMapper">
+
+    <select id="getBcSbzc" resultType="java.util.HashMap">
+        <include refid="com.base.baseMapper.pageStart"/>
+        select decode(status,'1','已下发','未下发') zt,t.* from zjzx.APP_SBZC_BC t where 1=1
+        <if test="dwdm != null">
+            and deptid=#{dwdm}
+        </if>
+        <if test="c1 != null">
+            and mc like '%'||#{c1}||'%'
+        </if>
+        <include refid="com.base.baseMapper.pageEnd"/>
+        order by rksj desc
+        <if test="sort != null">
+            ${sort}
+        </if>
+    </select>
+    <update id="saveBcsbzc">
+        BEGIN
+        <foreach collection="list" item="record" index="index">
+            update zjzx.APP_SBZC_BC set bm=#{record.BM},mc=#{record.MC},
+            dw=#{record.DW},sl=#{record.SL},jg=#{record.JG},cjmc=#{record.CJMC},gl=#{record.GL}
+            where id=#{record.ID};
+        </foreach>
+        COMMIT;
+        END;
+
+    </update>
+    <update id="xfBczbZh">
+        BEGIN
+        <foreach collection="list" item="record" index="index">
+            update zjzx.APP_SBZC_BC  set status='1' where id=#{record.ID};
+        </foreach>
+        COMMIT;
+        END;
+
+    </update>
+</mapper>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- $!{tableDto.comment}[${tableDto.name}]SQLMapper自动映射 -->
+<!--  注意:此文件自动生成-禁止手工修改 $!sysdate -->
+<mapper namespace="${package}.${tableDto.upname}Mapper">
+
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insert"  parameterType="${tableDto.upname}">
+		INSERT INTO ${tableDto.name} (
+		    <include refid="column" />
+		)
+		VALUES (
+#foreach($columnDto in $columnDtos)
+		    #{${columnDto.lpname}, jdbcType=${columnDto.jdbctype}}#if($velocityCount != $columnDtos.size()),#end  <!-- ${columnDto.comment} -->
+#end
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="${tableDto.upname}">
+		UPDATE ${tableDto.name}
+		<set>
+#foreach($columnDto in $columnDtos)
+			<if test="${columnDto.lpname} != null">
+		          ${columnDto.name} = #{${columnDto.lpname}, jdbcType=${columnDto.jdbctype}},  <!-- ${columnDto.comment} -->
+			</if>
+#end
+		</set>
+		WHERE ${bykeywhere}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM ${tableDto.name} WHERE ${bykeywhere}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="${tableDto.upname}">
+		SELECT
+		<include refid="column1" />
+		FROM ${tableDto.name} WHERE ${bykeywhere}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="hashmap" resultType="${tableDto.upname}">
+        SELECT * FROM (
+		SELECT
+		    <include refid="column1" />
+		FROM ${tableDto.name}
+		<where>
+		    <include refid="equal" />
+		</where>
+        )
+        <![CDATA[
+		WHERE ROWNUM < 2
+		]]>
+	</select>
+
+	<!-- 根据param查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="hashmap" resultType="${tableDto.upname}">
+		SELECT
+			<include refid="column1" />
+		FROM ${tableDto.name}
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据param查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="hashmap" resultType="${tableDto.upname}" useCache="false">
+        <include refid="com.slofzx.jbdf.base.BasicMapper.pageStart"/>
+	    SELECT
+			<include refid="column1" />
+		FROM ${tableDto.name}
+		<where>
+		    <include refid="equal" />
+		</where>
+        <include refid="com.slofzx.jbdf.base.BasicMapper.pageEnd"/>
+	</select>
+
+    <!-- 根据param查询并返回分页数据持久化对象集合 -->
+    <select id="listPage2" parameterType="hashmap" resultType="${tableDto.upname}" useCache="false">
+        <include refid="basic.pageStart"/>
+        SELECT
+        <include refid="column1" />
+        FROM ${tableDto.name}
+        <where>
+            <include refid="equal" />
+            <if test="mc != null and mc != ''">
+                AND mc like '%${mc}%'
+            </if>
+            <if test="kssj != null and kssj != ''">
+                AND to_char(rq,'yyyy-mm-dd') >= #{kssj}
+            </if>
+            <if test="jssj != null and jssj != ''">
+                AND to_char(rq,'yyyy-mm-dd') <![CDATA[ <= ]]> #{jssj}
+            </if>
+        </where>
+        <include refid="basic.pageEnd"/>
+    </select>
+
+    <select id="listPageCount" parameterType="hashmap" resultType="int" useCache="false">
+        SELECT
+         count(*) cn
+        FROM ${tableDto.name}
+        <where>
+            <include refid="equal" />
+			<if test="mc != null and mc != ''">
+				AND mc like '%${mc}%'
+			</if>
+			<if test="kssj != null and kssj != ''">
+				AND to_char(rq,'yyyy-mm-dd') >= #{kssj}
+			</if>
+			<if test="jssj != null and jssj != ''">
+				AND to_char(rq,'yyyy-mm-dd') <![CDATA[ <= ]]> #{jssj}
+			</if>
+        </where>
+    </select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+#foreach($columnDto in $columnDtos)
+		  ${columnDto.name} #if($velocityCount != $columnDtos.size()),#end  <!-- ${columnDto.comment} -->
+#end
+	</sql>
+
+    <!-- 表字段 -->
+    <sql id="column1">
+		#foreach($columnDto in $columnDtos)
+			${columnDto.name} as ${columnDto.lpname} #if($velocityCount != $columnDtos.size()),#end  <!-- ${columnDto.comment} -->
+		#end
+    </sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+#foreach($columnDto in $columnDtos)
+##只对VARCHAR类型使用非空字符串测试
+#if(${columnDto.jdbctype} == "VARCHAR")
+	    <if test="${columnDto.lpname} != null and ${columnDto.lpname} != ''">
+
+#else
+	   <if test="${columnDto.lpname} != null ">
+#end
+		      AND ${columnDto.name} = #{${columnDto.lpname}}  <!-- ${columnDto.comment} -->
+		</if>
+#end
+	</sql>
+	
+	<!-- Where模糊匹配字段 -->
+	<sql id="like">
+#foreach($columnDto in $columnDtos)
+##只对VARCHAR类型使用非空字符串测试
+#if(${columnDto.jdbctype} == "VARCHAR")	
+	    <if test="${columnDto.name} != null and ${columnDto.name} != ''">
+		      AND ${columnDto.name} like '%${${columnDto.name}}%'  <!-- ${columnDto.comment} -->
+		</if>
+#end
+#end
+	</sql>
+	
+</mapper>

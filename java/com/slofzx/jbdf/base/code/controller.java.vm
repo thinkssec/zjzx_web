@@ -1,0 +1,84 @@
+package ${package};
+
+import com.slofzx.jbdf.base.util.DateUtil;
+import com.slofzx.jbdf.base.util.Pagination;
+import com.slofzx.jbdf.base.util.StringUtil;
+import com.slofzx.jbdf.manager.controller.BaseController;
+import com.slofzx.sjcj.mapper.${tableDto.upname}Mapper;
+import com.slofzx.sjcj.bean.${tableDto.upname};
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+/**
+ * <b>$!{tableDto.comment}[${tableDto.lpname}]控制器</b>
+ *
+ * <p>
+ * 注意:此文件自动生成
+ * </p>
+ *
+ * @author $!author
+ * @date $!sysdate
+ */
+@Controller
+@RequestMapping("/${tableDto.lpname}")
+public class ${tableDto.upname}Controller extends BaseController {
+
+    public static final Logger logger = Logger.getLogger(${tableDto.upname}Controller.class);
+
+    @Autowired
+    private ${tableDto.upname}Mapper ${tableDto.lpname}Mapper;
+    /**
+     * 数据列表(未核实)
+     */
+    @RequestMapping("/list")
+    public String list(Pagination pagination, HttpServletRequest request, Model model) {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        String rq = dateFormat.format(date);
+        String srq=dateFormat.format(DateUtil.day(date,-1));
+
+        String mc = StringUtil.parseNull(request.getParameter("mc"), "");
+        String kssj = StringUtil.parseNull(request.getParameter("kssj"),srq);
+        String jssj = StringUtil.parseNull(request.getParameter("jssj"),rq);
+
+        HashMap map = new HashMap();
+        map.put("kssj", kssj);
+        map.put("jssj", jssj);
+        map.put("mc", mc);
+
+        int total= ${tableDto.lpname}Mapper.listPageCount(map);
+        pagination.setRowCount(total);
+        if(pagination.getPageSize()==0){
+            pagination.setPageSize(15);
+        }
+        if(pagination.getPage()==0){
+            pagination.setPage(1);
+        }
+        if(total > 0){
+            map.put("currentPage", String.valueOf(pagination
+                    .getPage()));
+            map.put("pageSize", String.valueOf(pagination
+                    .getPageSize()));
+            List list = ${tableDto.lpname}Mapper.listPage2(map);
+            list= list == null ? new ArrayList() : list;
+            model.addAttribute("dataList",list);
+        }
+
+        model.addAttribute("kssj", kssj);
+        model.addAttribute("jssj", jssj);
+        model.addAttribute("mc", mc);
+
+        return "/sjcj/${tableDto.upname}";
+    }
+}

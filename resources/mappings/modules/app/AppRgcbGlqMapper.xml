@@ -1,0 +1,2041 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- [app_rgcb_glq]SQLMapper自动映射 -->
+<!--  注意:此文件自动生成-禁止手工修改 2017-06-20 -->
+<mapper namespace="com.thinkgem.jeesite.modules.app.mapper.AppRgcbGlqMapper">
+
+	<insert id="mergerRgcbJcsj">
+		merge into APP_RGCB_CJ  a using (
+		select a.dwdm,avg(zsg) zsg,avg(lwg) lwg ,'19000101' tjsj
+			from app_dw a left join  APP_RGCB_CJJCSJ b on a.dwdm=b.dwdm
+			 and nd between #{c3} and #{c4}
+		where a.lb1=#{c1}
+		group by a.dwdm
+		) b on (a.dwdm=b.dwdm and a.tjsj=b.tjsj)
+		when matched then
+		update set a.zsg=b.zsg ,a.lwg=b.lwg ,a.sjd=#{c3}||'-'||#{c4}
+		when not matched then
+		insert (a.dwdm,a.tjsj,a.zsg,a.lwg,a.sjd)
+		values (b.dwdm,b.tjsj,b.zsg,b.lwg,#{c3}||'-'||#{c4})
+	</insert>
+	<insert id="insertRgcbCjjcsj">
+		declare
+			v_t varchar2(1000):='';
+		begin
+		  select dwdm into v_t from app_dw where dwjc=#{dwdm};
+		  delete from APP_RGCB_CJJCSJ where nd=#{nd} and dwdm=v_t;
+		  insert into APP_RGCB_CJJCSJ (nd,dwdm,zsg,lwg) values(#{nd},v_t,#{zsg},#{lwg});
+		  commit;
+		end;
+	</insert>
+	<insert id="insertRgcbGlq">
+		declare
+			v_t varchar2(1000):='';
+		begin
+		  select dwdm into v_t from app_dw where dwjc=#{dwdm};
+		  delete from APP_RGCB_GLQ where nd=#{nd} and dwdm=v_t;
+		  insert into APP_RGCB_GLQ (nd,dwdm,zrgcb,zygrs,zsg,lwg)
+		  values(#{nd},v_t,#{zrgcb},#{zygrs},#{zrgcb}/#{zygrs},#{lwg});
+		  commit;
+		end;
+	</insert>
+	<insert id="insertYqtsclfGlq">
+		declare
+			v_t varchar2(1000):='';
+		begin
+		  select dwdm into v_t from app_dw where dwjc=#{dwdm};
+		  delete from APP_YQTS_CLFGLQ where nd=#{nd} and dwdm=v_t;
+		  insert into APP_YQTS_CLFGLQ (nd,dwdm,zjs,CGCLFZE,JSDJCLF)
+		  values(#{nd},v_t,#{zjs},#{cgclfze},#{cgclfze}/#{zjs});
+		  commit;
+		end;
+	</insert>
+	<insert id="insertYqtsclfGlq2">
+		declare
+		v_t varchar2(1000):='';
+		begin
+		select dwdm into v_t from app_dw where dwjc=#{dwdm};
+		delete from APP_YQTS_CLFGLQ2 where nd=#{nd} and dwdm=v_t;
+		insert into APP_YQTS_CLFGLQ2 (nd,dwdm,zjs,CLFZE,JSDJCLF)
+		values(#{nd},v_t,#{zjs},#{clfze},#{clfze}/#{zjs});
+		commit;
+		end;
+	</insert>
+
+	<insert id="insertYqtsrlfGlq2">
+		declare
+		v_t varchar2(1000):='';
+		begin
+		select dwdm into v_t from app_dw where dwjc=#{dwdm};
+		delete from APP_YQTS_RLFGLQ2 where nd=#{nd} and dwdm=v_t;
+		insert into APP_YQTS_RLFGLQ2 (nd,dwdm,zjs,RLFZE,JSDJRLF)
+		values(#{nd},v_t,#{zjs},#{rlfze},#{rlfze}/#{zjs});
+		commit;
+		end;
+	</insert>
+	<insert id="insertZsfGlq">
+			declare
+			v_t varchar2(1000):='';
+			v_z varchar2(100):='';
+			begin
+			select dwdm into v_t from app_dw where dwjc=#{dwdm};
+			select zbbm into v_z from APP_ZSFY_ZB where zbmc=#{zbbm};
+			delete from APP_ZSFY_ZSFGLQ where nd=#{nd} and dwdm=v_t and zbbm=v_z;
+			insert into APP_ZSFY_ZSFGLQ (nd,dwdm,zbbm,PL10,P10B16,P16B25,P25B32,PG32)
+			values (#{nd},v_t,v_z,#{pl10},#{p10b16},#{p16b25},#{p25b32},#{pg32});
+			commit;
+			end;
+	</insert>
+	<insert id="insZywhf">
+		insert into APP_ZYWHF (DWDM,
+								FBSJ,
+								YCLX,
+								JCLX,
+								BSJB,
+								HS,
+								ZSFS,
+								GZLX,
+								BS,
+								WHLB,
+								YJKJ,
+								SJKJ,
+								YJWHF,
+								SJWHF,
+								ZWHF)
+								values(#{c7},sysdate,#{c1},#{c2},#{c3},#{c4},#{c5},#{c6},#{c9},#{c8},#{c10},#{c11},#{c12},#{c13},#{c14})
+
+	</insert>
+	<insert id="insCjsjf">
+
+		insert into APP_CJSJF_HZ(DWDM,
+								ND,
+								YCLX,
+								YJS,
+								YJJS,
+								SJS,
+								SJJS,
+								QXJS,
+								QXJJS,
+								ZPJS,
+								ZPJJS,
+								YJF,
+								SJF,
+								QXJF,
+								ZPJF,
+								HJF) values(
+						#{c1},
+						#{c2},
+						#{c3},
+						#{c4},
+						#{c5},
+						#{c6},
+						#{c7},
+						#{c8},
+						#{c9},
+						#{c10},
+						#{c11},
+						#{c12},
+						#{c13},
+						#{c14},
+						#{c15},
+						#{c16}
+						)
+	</insert>
+	<insert id="insWhxlf">
+		insert into APP_WHXLF_HZ (ND,
+SBLX,
+WXLX,
+SBYZ,
+WXPC,
+DCWXF,
+DXWXF,sssj) values (to_char(sysdate,'yyyy'),#{c1},#{c2},#{c3},#{c4},nvl(#{c3}*decode(#{c2},3,0.05,4,0.05,5,0.2,6,0.3,0),0),#{c5},sysdate)
+	</insert>
+
+	<update id="updRgcbcj" parameterType="hashmap">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update APP_rgcb_cj
+			set zsg=#{record.ZSG} , lwg=#{record.LWG} where tjsj=#{record.TJSJ} and dwdm=#{record.DWDM};
+		</foreach>
+		COMMIT;
+		END;
+
+	</update>
+	<update id="fbRgcbHz">
+		BEGIN
+		delete from app_rgcb_hz where fbsj=to_char(sysdate,'yyyymmdd') and dwfl=#{c1};
+
+        merge into (select * from app_rgcb_cj ) s
+        using  (select to_char(sysdate,'yyyymmdd') tjsj,a.dwdm,zsg,lwg,sjd,tjr,a.lb1
+			from app_dw a left join app_rgcb_cj b on a.dwdm=b.dwdm where  tjsj=#{c2} and  lb1=#{c1} and  lb1 is not null) k
+		on (s.tjsj=k.tjsj and s.dwdm=k.dwdm  and s.tjsj=to_char(sysdate,'yyyymmdd')
+			and s.dwdm in (select dwdm from app_dw where lb1=#{c1}))
+        when matched then
+         update set zsg=k.zsg,lwg=k.lwg,sjd=k.sjd
+		when not matched then
+			insert (tjsj,dwdm,zsg,lwg,sjd,tjr) values (k.tjsj,k.dwdm,k.zsg,k.lwg,k.sjd,k.tjr);
+
+		insert into app_rgcb_hz (dwfl,zsg,lwg,cnxmdy,fbsj) (
+			select a.lb1,avg(zsg) zsg,avg(lwg) lwg,2.4 cnxmdy,to_char(sysdate,'yyyymmdd')
+				from app_dw a left join app_rgcb_cj b on a.dwdm=b.dwdm where lb1 is not null and b.tjsj=#{c2} and a.lb1 =#{c1} group by a.lb1 );
+		commit;
+		end;
+
+	</update>
+	<update id="updRgcbGlq">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update app_rgcb_glq set zrgcb=#{record.ZRGCB},zygrs=#{record.ZYGRS},lwg=#{record.LWG}
+			where nd=#{record.ND} and dwdm=#{record.DWDM};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+	<update id="fbRgcbGlq">
+		merge into APP_RGCB_CJJCSJ a using(select * from APP_RGCB_GLQ where nd between ${c3} and ${c4} and dwdm=#{c1}) b
+		on (a.nd=b.nd and a.dwdm=b.dwdm)
+		when matched then
+		update set a.zsg=b.zsg,a.lwg=b.lwg
+		when not matched then
+		insert (nd,dwdm,zsg,lwg) values(b.nd,b.dwdm,b.zsg,b.lwg)
+	</update>
+	<update id="mergerYqtsclfJcsj">
+		merge into APP_YQTS_CLFCJ  a using (
+		select a.dwdm,avg(DJCGCLF) DJCGCLF,'19000101' tjsj
+			from app_dw a left join  APP_YQTS_CLFJCSJ b on a.dwdm=b.dwdm
+			 and nd between #{c3} and #{c4}
+		where a.lb1=#{c1}
+		group by a.dwdm
+		) b on (a.dwdm=b.dwdm and a.tjsj=b.tjsj)
+		when matched then
+		update set a.DJCGCLF=b.DJCGCLF,a.sjd=#{c3}||'-'||#{c4}
+		when not matched then
+		insert (a.dwdm,a.tjsj,a.DJCGCLF,a.sjd)
+		values (b.dwdm,b.tjsj,b.DJCGCLF,#{c3}||'-'||#{c4})
+	</update>
+
+	<update id="mergerZsfJcsj">
+		merge into APP_ZSFY_ZSFCJ  a using (
+		select a.dwdm,avg(PL10) PL10,avg(P10B16) P10B16,avg(P16B25) P16B25,
+		avg(P25B32) P25B32,avg(PG32) PG32,'19000101' tjsj
+		from app_dw a left join  APP_ZSFY_ZSFJCSJ b on a.dwdm=b.dwdm
+		and nd between #{c3} and #{c4}
+		where a.lb2=#{c1}
+		group by a.dwdm
+		) b on (a.dwdm=b.dwdm and a.tjsj=b.tjsj)
+		when matched then
+		update set a.PL10=b.PL10,a.P10B16=b.P10B16,a.P16B25=b.P16B25,a.P25B32=b.P25B32,a.PG32=b.PG32,
+		   a.sjd=#{c3}||'-'||#{c4}
+		when not matched then
+		insert (a.dwdm,a.tjsj,a.PL10,a.P10B16,a.P16B25,a.P25B32,a.PG32,a.sjd)
+		values (b.dwdm,b.tjsj,b.PL10,b.P10B16,b.P16B25,b.P25B32,b.PG32,#{c3}||'-'||#{c4})
+	</update>
+
+	<update id="mergerYqclfJcsj">
+		merge into APP_YQCLF_CJ  a using (
+		select a.dwdm,#{c10} yp,avg(NHF) NHF,avg(CLF) CLF,avg(ZJF) ZJF,
+		avg(RGF) RGF,avg(XLF) XLF,avg(QTF) QTF,avg(YQCLF) YQCLF,'19000101' tjsj
+		from app_dw a left join  APP_YQCLF_JCSJ b on a.dwdm=b.dwdm and  b.yp=#{c10}
+		and nd between #{c3} and #{c4}
+		where a.lb2=#{c1}
+		group by a.dwdm
+		) b on (a.dwdm=b.dwdm and a.tjsj=b.tjsj and a.yp=b.yp)
+		when matched then
+		update set a.NHF=b.NHF,a.CLF=b.CLF,a.ZJF=b.ZJF,a.RGF=b.RGF,a.XLF=b.XLF,a.QTF=b.QTF,a.YQCLF=b.YQCLF,
+		a.sjd=#{c3}||'-'||#{c4}
+		when not matched then
+		insert (a.dwdm,a.tjsj,a.NHF,a.CLF,a.ZJF,a.RGF,a.XLF,a.QTF,a.YQCLF,a.SJD,a.YP)
+		values (b.dwdm,b.tjsj,b.NHF,b.CLF,b.ZJF,b.RGF,b.XLF,b.QTF,b.YQCLF,#{c3}||'-'||#{c4},b.YP)
+	</update>
+
+	<update id="mergerWsclfJcsj">
+		merge into APP_WSCLF_CJ  a using (
+		select a.dwdm,#{c10} yp,avg(DF) DF,avg(CLF) CLF,avg(ZJF) ZJF,avg(YJF) YJF,
+		avg(RGF) RGF,avg(XLF) XLF,avg(QTF) QTF,avg(WSCLF) WSCLF,'19000101' tjsj
+		from app_dw a left join  APP_WSCLF_JCSJ b on a.dwdm=b.dwdm and  b.yp=#{c10}
+		and nd between #{c3} and #{c4}
+		where a.lb2=#{c1}
+		group by a.dwdm
+		) b on (a.dwdm=b.dwdm and a.tjsj=b.tjsj and a.yp=b.yp)
+		when matched then
+		update set a.DF=b.DF,a.YJF=b.YJF,a.CLF=b.CLF,a.ZJF=b.ZJF,a.RGF=b.RGF,a.XLF=b.XLF,a.QTF=b.QTF
+			,a.WSCLF=b.WSCLF,
+		a.sjd=#{c3}||'-'||#{c4}
+		when not matched then
+		insert (a.dwdm,a.tjsj,a.yjf,a.DF,a.CLF,a.ZJF,a.RGF,a.XLF,a.QTF,a.WSCLF,a.SJD,a.YP)
+		values (b.dwdm,b.tjsj,b.yjf,b.DF,b.CLF,b.ZJF,b.RGF,b.XLF,b.QTF,b.WSCLF,#{c3}||'-'||#{c4},b.YP)
+	</update>
+
+	<update id="mergerZsfJcsj2">
+		merge into APP_ZSFY_ZSFCJ2  a using (
+		select a.dwdm,avg(ZSF) ZSF,avg(zzsl) zzsl,avg(zzsf) zzsf,'19000101' tjsj
+		from app_dw a left join  APP_ZSFY_ZSFJCSJ2 b on a.dwdm=b.dwdm
+		and nd between #{c3} and #{c4}
+		where a.lb2=#{c1}
+		group by a.dwdm
+		) b on (a.dwdm=b.dwdm and a.tjsj=b.tjsj)
+		when matched then
+		update set a.ZSF=b.ZSF,
+		a.zzsl=b.zzsl,a.zzsf=b.zzsf,
+		a.sjd=#{c3}||'-'||#{c4}
+		when not matched then
+		insert (a.dwdm,a.tjsj,a.ZSF,a.zzsl,a.zzsf,sjd)
+		values (b.dwdm,b.tjsj,b.ZSF,b.zzsl,b.zzsf,#{c3}||'-'||#{c4})
+	</update>
+
+	<update id="mergerDlfJcsj2">
+		merge into APP_DLF_CJ2  a using (
+		select a.dwdm,avg(DLF) DLF,avg(yjs) yjs,avg(zdlf) zdlf,'19000101' tjsj
+		from app_dw a left join  APP_DLF_JCSJ2 b on a.dwdm=b.dwdm
+		and nd between #{c3} and #{c4}
+		where a.lb2=#{c1}
+		group by a.dwdm
+		) b on (a.dwdm=b.dwdm and a.tjsj=b.tjsj)
+		when matched then
+		update set a.dlF=b.dlF,
+		a.zdlf=b.zdlf,a.yjs=b.yjs,
+		a.sjd=#{c3}||'-'||#{c4}
+		when not matched then
+		insert (a.dwdm,a.tjsj,a.DLF,a.zdlf,a.yjs,sjd)
+		values (b.dwdm,b.tjsj,b.DLF,b.zdlf,b.yjs,#{c3}||'-'||#{c4})
+	</update>
+
+
+	<update id="mergerCyrcfJcsj2">
+		merge into APP_CYRCF_CJ2  a using (
+		select a.dwdm,avg(ZQF) ZQF,avg(zql) zql,avg(zzqf) zzqf,'19000101' tjsj
+		from app_dw a left join  APP_CYRCF_JCSJ2 b on a.dwdm=b.dwdm
+		and nd between #{c3} and #{c4}
+		where a.lb2=#{c1}
+		group by a.dwdm
+		) b on (a.dwdm=b.dwdm and a.tjsj=b.tjsj)
+		when matched then
+		update set a.zqF=b.zqF,
+		a.zzqf=b.zzqf,a.zql=b.zql,
+		a.sjd=#{c3}||'-'||#{c4}
+		when not matched then
+		insert (a.dwdm,a.tjsj,a.zqF,a.zzqf,a.zql,sjd)
+		values (b.dwdm,b.tjsj,b.zqF,b.zzqf,b.zql,#{c3}||'-'||#{c4})
+	</update>
+
+	<update id="mergerZywhfJcsj2">
+	merge into APP_zywhf_CJ2  a using (
+	select a.dwdm,avg(ZYF) ZYF,avg(zcf) zcf,avg(whf) whf,avg(csf) csf,'19000101' tjsj
+	from app_dw a left join  APP_zywhf_JCSJ2 b on a.dwdm=b.dwdm
+	and nd between #{c3} and #{c4}
+	where a.lb2=#{c1}
+	group by a.dwdm
+	) b on (a.dwdm=b.dwdm and a.tjsj=b.tjsj)
+	when matched then
+	update set a.zyF=b.zyF,
+	a.zcf=b.zcf,a.whf=b.whf,
+	a.csf=b.csf,
+	a.sjd=#{c3}||'-'||#{c4}
+	when not matched then
+	insert (a.dwdm,a.tjsj,a.zyF,a.csf,a.whf,a.zcf,sjd)
+	values (b.dwdm,b.tjsj,b.zyF,b.csf,b.whf,b.zcf,#{c3}||'-'||#{c4})
+</update>
+
+	<update id="mergerCjsjfJcsj2">
+		merge into APP_cjsjf_CJ2  a using (
+		select a.dwdm,avg(cjsjf) cjsjf,avg(yjf) yjf,avg(sjf) sjf,avg(qxjf) qxjf,'19000101' tjsj
+		from app_dw a left join  APP_cjsjf_JCSJ2 b on a.dwdm=b.dwdm
+		and nd between #{c3} and #{c4}
+		where a.lb2=#{c1}
+		group by a.dwdm
+		) b on (a.dwdm=b.dwdm and a.tjsj=b.tjsj)
+		when matched then
+		update set a.cjsjF=b.cjsjF,
+		a.yjf=b.yjf,a.sjf=b.sjf,
+		a.qxjf=b.qxjf,
+		a.sjd=#{c3}||'-'||#{c4}
+		when not matched then
+		insert (a.dwdm,a.tjsj,a.cjsjF,a.yjf,a.sjf,a.qxjf,sjd)
+		values (b.dwdm,b.tjsj,b.cjsjf,b.yjf,b.sjf,b.qxjf,#{c3}||'-'||#{c4})
+	</update>
+
+	<update id="mergerWhxlfJcsj2">
+		merge into APP_whxlf_CJ2  a using (
+		select a.dwdm,avg(whxlf) whxlf,'19000101' tjsj
+		from app_dw a left join  APP_whxlf_JCSJ2 b on a.dwdm=b.dwdm
+		and nd between #{c3} and #{c4}
+		where a.lb2=#{c1}
+		group by a.dwdm
+		) b on (a.dwdm=b.dwdm and a.tjsj=b.tjsj)
+		when matched then
+		update set a.whxlf=b.whxlf,
+		a.sjd=#{c3}||'-'||#{c4}
+		when not matched then
+		insert (a.dwdm,a.tjsj,a.whxlf,sjd)
+		values (b.dwdm,b.tjsj,b.whxlf,#{c3}||'-'||#{c4})
+	</update>
+
+    <update id="mergerYqtsqtfJcsj">
+        merge into APP_yqts_qtCJ  a using (
+        select a.dwdm,avg(qtf) qtf,'19000101' tjsj
+        from app_dw a left join  APP_yqts_qtJCSJ b on a.dwdm=b.dwdm
+        and nd between #{c3} and #{c4}
+        where a.lb2=#{c1}
+        group by a.dwdm
+        ) b on (a.dwdm=b.dwdm and a.tjsj=b.tjsj)
+        when matched then
+        update set a.qtf=b.qtf,
+        a.sjd=#{c3}||'-'||#{c4}
+        when not matched then
+        insert (a.dwdm,a.tjsj,a.qtf,sjd)
+        values (b.dwdm,b.tjsj,b.qtf,#{c3}||'-'||#{c4})
+    </update>
+
+    <update id="mergerYqtsqtfJcsj2">
+        merge into APP_yqts_qtCJ2  a using (
+                                              select a.dwdm,avg(qtf) qtf,'19000101' tjsj
+                                              from app_dw a left join  APP_yqts_qtJCSJ2 b on a.dwdm=b.dwdm
+                                                                                            and nd between #{c3} and #{c4}
+                                              where a.lb2=#{c1}
+                                              group by a.dwdm
+                                          ) b on (a.dwdm=b.dwdm and a.tjsj=b.tjsj)
+        when matched then
+        update set a.qtf=b.qtf,
+            a.sjd=#{c3}||'-'||#{c4}
+        when not matched then
+        insert (a.dwdm,a.tjsj,a.qtf,sjd)
+        values (b.dwdm,b.tjsj,b.qtf,#{c3}||'-'||#{c4})
+    </update>
+
+	<update id="mergerYqclfJcsj2">
+		merge into APP_YQCLF_CJ2  a using (
+		select a.dwdm,#{c10} yp,avg(YQCLF) YQCLF,avg(cll) cll,avg(zYQCLF) zYQCLF,'19000101' tjsj
+		from app_dw a left join  APP_YQCLF_JCSJ2 b on a.dwdm=b.dwdm
+		and nd between #{c3} and #{c4} and yp=#{c10}
+		where a.lb2=#{c1}
+		group by a.dwdm,yp
+		) b on (a.dwdm=b.dwdm and a.tjsj=b.tjsj and a.yp=b.yp)
+		when matched then
+		update set a.YQCLF=b.YQCLF,
+		a.zYQCLF=b.zYQCLF,a.cll=b.cll,
+		a.sjd=#{c3}||'-'||#{c4}
+		when not matched then
+		insert (a.dwdm,a.tjsj,a.YQCLF,a.zYQCLF,a.cll,sjd,yp)
+		values (b.dwdm,b.tjsj,b.YQCLF,b.zYQCLF,b.cll,#{c3}||'-'||#{c4},b.yp)
+	</update>
+
+	<update id="mergerWsclfJcsj2">
+		merge into APP_WSCLF_CJ2  a using (
+		select a.dwdm,#{c10} yp,avg(WSCLF) WSCLF,avg(cll) cll,avg(zWSCLF) zWSCLF,'19000101' tjsj
+		from app_dw a left join  APP_WSCLF_JCSJ2 b on a.dwdm=b.dwdm
+		and nd between #{c3} and #{c4} and yp=#{c10}
+		where a.lb2=#{c1}
+		group by a.dwdm,yp
+		) b on (a.dwdm=b.dwdm and a.tjsj=b.tjsj and a.yp=b.yp)
+		when matched then
+		update set a.WSCLF=b.WSCLF,
+		a.zWSCLF=b.zWSCLF,a.cll=b.cll,
+		a.sjd=#{c3}||'-'||#{c4}
+		when not matched then
+		insert (a.dwdm,a.tjsj,a.WSCLF,a.zWSCLF,a.cll,sjd,yp)
+		values (b.dwdm,b.tjsj,b.WSCLF,b.zWSCLF,b.cll,#{c3}||'-'||#{c4},b.yp)
+	</update>
+
+	<update id="mergerYqtsclfJcsj2">
+		merge into APP_YQTS_CLFCJ2  a using (
+		select a.dwdm,avg(CLF) CLF,'19000101' tjsj
+		from app_dw a left join  APP_YQTS_CLFJCSJ2 b on a.dwdm=b.dwdm
+		and nd between #{c3} and #{c4}
+		where a.lb1=#{c1}
+		group by a.dwdm
+		) b on (a.dwdm=b.dwdm and a.tjsj=b.tjsj)
+		when matched then
+		update set a.CLF=b.CLF,a.sjd=#{c3}||'-'||#{c4}
+		when not matched then
+		insert (a.dwdm,a.tjsj,a.CLF,a.sjd)
+		values (b.dwdm,b.tjsj,b.CLF,#{c3}||'-'||#{c4})
+	</update>
+	<update id="updYqtsclfcj">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update APP_yqts_clfcj
+			set DJCGCLF=#{record.DJCGCLF}  where tjsj=#{record.TJSJ} and dwdm=#{record.DWDM};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+
+	<update id="updYqtsclfcj2">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update APP_yqts_clfcj2
+			set CLF=#{record.CLF}  where tjsj=#{record.TJSJ} and dwdm=#{record.DWDM};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+
+	<update id="updYqtsrlfcj2">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update APP_yqts_rlfcj2
+			set CLF=#{record.RLF}  where tjsj=#{record.TJSJ} and dwdm=#{record.DWDM};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+
+	<update id="fbYqtsclfHz">
+		BEGIN
+		delete from app_yqts_clf where fbsj=to_char(sysdate,'yyyymmdd') and dwfl=#{c1};
+
+        merge into (select * from app_yqts_clfcj ) s
+        using  (select to_char(sysdate,'yyyymmdd') tjsj,a.dwdm,DJCGCLF,sjd,tjr,a.lb1
+			from app_dw a left join app_yqts_clfcj b on a.dwdm=b.dwdm where  tjsj=#{c2} and  lb1=#{c1} and  lb1 is not null) k
+		on (s.tjsj=k.tjsj and s.dwdm=k.dwdm  and s.tjsj=to_char(sysdate,'yyyymmdd')
+			and s.dwdm in (select dwdm from app_dw where lb1=#{c1}))
+            when matched then
+        update set djcgclf=k.djcgclf,sjd=k.sjd
+		when not matched then
+			insert (tjsj,dwdm,DJCGCLF,sjd,tjr) values (k.tjsj,k.dwdm,k.DJCGCLF,k.sjd,k.tjr);
+
+		insert into app_yqts_clf (dwfl,DJCGCLF,fbsj) (
+			select a.lb1,avg(DJCGCLF) DJCGCLF,to_char(sysdate,'yyyymmdd')
+				from app_dw a left join app_yqts_clfcj b on a.dwdm=b.dwdm where lb1 is not null and b.tjsj=#{c2} and a.lb1 =#{c1} group by a.lb1 );
+		commit;
+		end;
+
+	</update>
+
+	<update id="fbYqtsclfHz2">
+		BEGIN
+		delete from app_yqts_clf2 where fbsj=to_char(sysdate,'yyyymmdd') and dwfl=#{c1};
+
+		merge into (select * from app_yqts_clfcj2 ) s
+		using  (select to_char(sysdate,'yyyymmdd') tjsj,a.dwdm,CLF,sjd,tjr,a.lb1
+		from app_dw a left join app_yqts_clfcj2 b on a.dwdm=b.dwdm where  tjsj=#{c2} and  lb1=#{c1} and  lb1 is not null) k
+		on (s.tjsj=k.tjsj and s.dwdm=k.dwdm  and s.tjsj=to_char(sysdate,'yyyymmdd')
+		and s.dwdm in (select dwdm from app_dw where lb1=#{c1}))
+            when matched then
+        update set clf=k.clf,sjd=k.sjd
+		when not matched then
+		insert (tjsj,dwdm,CLF,sjd,tjr) values (k.tjsj,k.dwdm,k.CLF,k.sjd,k.tjr);
+
+		insert into app_yqts_clf2 (dwfl, CLF,fbsj) (
+		select a.lb1,avg( CLF)  CLF,to_char(sysdate,'yyyymmdd')
+		from app_dw a left join app_yqts_clfcj2 b on a.dwdm=b.dwdm where lb1 is not null and b.tjsj=#{c2} and a.lb1 =#{c1} group by a.lb1 );
+		commit;
+		end;
+
+	</update>
+
+	<update id="fbYqtsrlfHz2">
+		BEGIN
+		delete from app_yqts_rlf2 where fbsj=to_char(sysdate,'yyyymmdd') and dwfl=#{c1};
+
+		merge into (select * from app_yqts_rlfcj2 ) s
+		using  (select to_char(sysdate,'yyyymmdd') tjsj,a.dwdm,RLF,sjd,tjr,a.lb1
+		from app_dw a left join app_yqts_rlfcj2 b on a.dwdm=b.dwdm where  tjsj=#{c2} and  lb1=#{c1} and  lb1 is not null) k
+		on (s.tjsj=k.tjsj and s.dwdm=k.dwdm  and s.tjsj=to_char(sysdate,'yyyymmdd')
+		and s.dwdm in (select dwdm from app_dw where lb1=#{c1}))
+            when matched then
+        update set rlf=k.rlf,sjd=k.sjd
+		when not matched then
+		insert (tjsj,dwdm,RLF,sjd,tjr) values (k.tjsj,k.dwdm,k.RLF,k.sjd,k.tjr);
+
+		insert into app_yqts_rlf2 (dwfl, RLF,fbsj) (
+		select a.lb1,avg( RLF)  RLF,to_char(sysdate,'yyyymmdd')
+		from app_dw a left join app_yqts_rlfcj2 b on a.dwdm=b.dwdm where lb1 is not null and b.tjsj=#{c2} and a.lb1 =#{c1} group by a.lb1 );
+		commit;
+		end;
+
+	</update>
+	<update id="updYqtsclfGlq">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update app_yqts_clfglq set ZJS=#{record.ZJS},CGCLFZE=#{record.CGCLFZE}
+			where nd=#{record.ND} and dwdm=#{record.DWDM};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+
+	<update id="updZsfGlq">
+        declare
+        p1 number:=0;
+        p2 number:=0;
+        p3 number:=0;
+        p4 number:=0;
+        p5 number:=0;
+        pdwdm varchar2(30):='';
+        pnd varchar2(30):='';
+        pflag varchar2(1):='0';
+        cursor cur_1 is select * from app_zsfy_zsfglq where nd=pnd and dwdm=pdwdm;
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update app_zsfy_zsfglq set PL10=#{record.PL10},P10B16=#{record.P10B16},
+			P16B25=#{record.P16B25},P25B32=#{record.P25B32},PG32=#{record.PG32}
+			where nd=#{record.ND} and dwdm=#{record.DWDM} and zbbm=#{record.ZBBM};
+            pdwdm:=#{record.DWDM};
+            pnd:=#{record.ND};
+            pflag:='1';
+		</foreach>
+        if pflag='1' then
+        begin
+        select pl10,p10b16,p16b25,p25b32,pg32 into p1,p2,p3,p4,p5 from app_zsfy_zsfglq
+        where nd=pnd and dwdm=pdwdm and zbbm='1';
+           for r_1 in cur_1 loop
+            begin
+               if r_1.zbbm in (2,4,6,8,10) then
+                    begin
+                        update app_zsfy_zsfglq set PL10=r_1.PL10/(p1*10),P10B16=r_1.p10b16/(p2*16),
+                        P16B25=r_1.p16b25/(p3*25),P25B32=r_1.p25b32/(p4*32),PG32=r_1.pg32/(p5*32)
+                        where nd=pnd and dwdm=pdwdm and zbbm=to_number(r_1.zbbm)+1;
+                    END;
+               END IF;
+                if r_1.zbbm =12 then
+                begin
+                update app_zsfy_zsfglq set PL10=r_1.PL10*0.04/(p1*10),P10B16=r_1.p10b16*0.04/(p2*16),
+                P16B25=r_1.p16b25*0.04/(p3*25),P25B32=r_1.p25b32*0.04/(p4*32),PG32=r_1.pg32*0.04/(p5*32)
+                where nd=pnd and dwdm=pdwdm and zbbm=to_number(r_1.zbbm)+1;
+                END;
+                END IF;
+            END;
+        END LOOP;
+        end;
+        END IF;
+		COMMIT;
+		END;
+	</update>
+
+	<update id="updCyrcfGlq2">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update APP_CYRCF_GLQ2 set ZZQF=#{record.ZZQF},ZQL=#{record.ZQL},
+			ZQF=#{record.ZQF}
+			where nd=#{record.ND} and dwdm=#{record.DWDM};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+
+	<update id="updZywhfGlq2">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update APP_ZYWHF_GLQ2 set ZYF=#{record.ZYF},ZCF=#{record.ZCF},
+			CSF=#{record.CSF},WHF=#{record.WHF}
+			where nd=#{record.ND} and dwdm=#{record.DWDM};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+
+	<update id="updCjsjfGlq2">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update APP_CJSJF_GLQ2 set CJSJF=#{record.CJSJF},YJF=#{record.YJF},
+			SJF=#{record.SJF},QXJF=#{record.QXJF}
+			where nd=#{record.ND} and dwdm=#{record.DWDM} and yclx=#{record.YCLX};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+	<update id="updWhxlfGlq2">
+		BEGIN
+		<foreach collection="list" item="record" index="index">
+			update APP_WHXLF_GLQ2 set WHXLF=#{record.WHXLF}
+			where nd=#{record.ND} and dwdm=#{record.DWDM};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+
+    <update id="updYqtsqtfGlq">
+        BEGIN
+        <foreach collection="list" item="record" index="index">
+            update APP_YQTS_QTGLQ set qtF=#{record.QTF},YJS=#{record.YJS},
+            ZQTF=#{record.ZQTF}
+            where nd=#{record.ND} and dwdm=#{record.DWDM};
+        </foreach>
+        COMMIT;
+        END;
+    </update>
+
+    <update id="updYqtsqtfGlq2">
+        BEGIN
+        <foreach collection="list" item="record" index="index">
+            update APP_YQTS_QTGLQ2 set qtF=#{record.QTF}
+            where nd=#{record.ND} and dwdm=#{record.DWDM} and xm=#{record.XM};
+            <if test="record.YJS != null and record.YJS !=''">
+                update APP_YQTS_QTGLQ2 set yjs=#{record.YJS}
+                where nd=#{record.ND} and dwdm=#{record.DWDM};
+            </if>
+        </foreach>
+        COMMIT;
+        END;
+    </update>
+
+	<update id="updDlfGlq2">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update APP_DLF_GLQ2 set ZDLF=#{record.ZDLF},YJS=#{record.YJS},
+			DLF=#{record.DLF}
+			where nd=#{record.ND} and dwdm=#{record.DWDM};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+
+	<update id="updYqclfGlq2">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update APP_YQCLF_GLQ2 set ZYQCLF=#{record.ZYQCLF},CLL=#{record.CLL},
+			YQCLF=#{record.YQCLF}
+			where nd=#{record.ND} and dwdm=#{record.DWDM} and yp=#{record.YP};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+
+    <update id="updWsclfGlq2">
+        BEGIN
+
+        <foreach collection="list" item="record" index="index">
+            update APP_WSCLF_GLQ2 set ZWSCLF=#{record.ZWSCLF},CLL=#{record.CLL},
+            WSCLF=#{record.WSCLF}
+            where nd=#{record.ND} and dwdm=#{record.DWDM} and yp=#{record.YP};
+        </foreach>
+        COMMIT;
+        END;
+    </update>
+
+	<update id="updYqclfGlq">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update APP_YQCLF_GLQ set
+			CLYL=#{record.CLYL},
+			RYF=#{record.RYF},
+			RQF=#{record.RQF},
+			RMF=#{record.RMF},
+			YJF=#{record.YJF},
+			DF=#{record.DF},
+			DYCLF=decode(#{record.CLYL},0,0,(nvl(#{record.RYF},0)+nvl(#{record.RQF},0)+nvl(#{record.RMF},0)+nvl(#{record.YJF},0)+nvl(#{record.DF},0))/#{record.CLYL}),
+			ZJF=#{record.ZJF},
+			RGF=#{record.RGF},
+			XLF=#{record.XLF},
+			DYZJF=decode(#{record.CLYL},0,0,#{record.ZJF}/#{record.CLYL}),
+			DYRGF=decode(#{record.CLYL},0,0,#{record.RGF}/#{record.CLYL}),
+			DYXLF=decode(#{record.CLYL},0,0,#{record.XLF}/#{record.CLYL}),
+			QT=#{record.QT},
+			DYQT=decode(#{record.CLYL},0,0,#{record.QT}/#{record.CLYL})
+			where nd=#{record.ND} and dwdm=#{record.DWDM} and lhz=#{record.LHZ} and yp=#{record.YP};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+
+	<update id="updWsclfGlq">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update APP_WSCLF_GLQ set
+			CLYL=#{record.CLYL},
+			DF=#{record.DF},
+			DYDF=decode(#{record.CLYL},0,0,#{record.DF}/#{record.CLYL}),
+			ZJF=#{record.ZJF},
+			RGF=#{record.RGF},
+			XLF=#{record.XLF},
+			DYZJF=decode(#{record.CLYL},0,0,#{record.ZJF}/#{record.CLYL}),
+			DYRGF=decode(#{record.CLYL},0,0,#{record.RGF}/#{record.CLYL}),
+			DYXLF=decode(#{record.CLYL},0,0,#{record.XLF}/#{record.CLYL}),
+			QT=#{record.QT},
+			DYQT=decode(#{record.CLYL},0,0,#{record.QT}/#{record.CLYL})
+			where nd=#{record.ND} and dwdm=#{record.DWDM} and wsz=#{record.WSZ} and yp=#{record.YP};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+
+	<update id="updYqtsclfGlq2">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update app_yqts_clfglq2 set ZJS=#{record.ZJS},CLFZE=#{record.CLFZE}
+			where nd=#{record.ND} and dwdm=#{record.DWDM};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+
+	<update id="updYqtsrlfGlq2">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update app_yqts_rlfglq2 set ZJS=#{record.ZJS},RLFZE=#{record.RLFZE}
+			where nd=#{record.ND} and dwdm=#{record.DWDM};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+	<update id="fbYqtsclfGlq">
+		merge into APP_YQTS_CLFJCSJ a using(select * from APP_YQTS_CLFGLQ where nd between ${c3} and ${c4} and dwdm=#{c1}) b
+		on (a.nd=b.nd and a.dwdm=b.dwdm)
+		when matched then
+		update set a.DJCGCLF=b.JSDJCLF
+		when not matched then
+		insert (nd,dwdm,DJCGCLF) values(b.nd,b.dwdm,b.JSDJCLF)
+	</update>
+
+	<update id="fbYqtsclfGlq2">
+		merge into APP_YQTS_CLFJCSJ2 a using(select * from APP_YQTS_CLFGLQ2 where nd between ${c3} and ${c4} and dwdm=#{c1}) b
+		on (a.nd=b.nd and a.dwdm=b.dwdm)
+		when matched then
+		update set a.CLF=b.JSDJCLF
+		when not matched then
+		insert (nd,dwdm,CLF) values(b.nd,b.dwdm,b.JSDJCLF)
+	</update>
+	<update id="fbYqtsrlfGlq2">
+		merge into APP_YQTS_RLFJCSJ2 a using(select * from APP_YQTS_RLFGLQ2 where nd between ${c3} and ${c4} and dwdm=#{c1}) b
+		on (a.nd=b.nd and a.dwdm=b.dwdm)
+		when matched then
+		update set a.RLF=b.JSDJRLF
+		when not matched then
+		insert (nd,dwdm,RLF) values(b.nd,b.dwdm,b.JSDJRLF)
+	</update>
+	<update id="mergerYqtsrlfJcsj2">
+		merge into APP_YQTS_RLFCJ2  a using (
+		select a.dwdm,avg(RLF) RLF,'19000101' tjsj
+		from app_dw a left join  APP_YQTS_RLFJCSJ2 b on a.dwdm=b.dwdm
+		and nd between #{c3} and #{c4}
+		where a.lb1=#{c1}
+		group by a.dwdm
+		) b on (a.dwdm=b.dwdm and a.tjsj=b.tjsj)
+		when matched then
+		update set a.RLF=b.RLF,a.sjd=#{c3}||'-'||#{c4}
+		when not matched then
+		insert (a.dwdm,a.tjsj,a.RLF,a.sjd)
+		values (b.dwdm,b.tjsj,b.RLF,#{c3}||'-'||#{c4})
+	</update>
+	<update id="fbZsfHz">
+		BEGIN
+		delete from app_ZSFY_zsf where fbsj=to_char(sysdate,'yyyymmdd') and dwfl=#{c1};
+
+        merge into (select * from app_zsfy_zsfcj ) s
+        using  (select to_char(sysdate,'yyyymmdd') tjsj,a.dwdm,PL10,P10B16,P16B25,P25B32,PG32,sjd,tjr,a.lb2
+			from app_dw a left join app_zsfy_zsfcj b on a.dwdm=b.dwdm where  tjsj=#{c2} and  lb2=#{c1} and  lb2 is not null) k
+		on (s.tjsj=k.tjsj and s.dwdm=k.dwdm  and s.tjsj=to_char(sysdate,'yyyymmdd')
+			and s.dwdm in (select dwdm from app_dw where lb2=#{c1}))
+            when matched then
+        update set Pl10=k.pl10,p10b16=k.p10b16,p16b25=k.p16b25,p25b32=k.p25b32,pg32=k.pg32,sjd=k.sjd
+            when not matched then
+			insert (tjsj,dwdm,PL10,P10B16,P16B25,P25B32,PG32,sjd,tjr) values (k.tjsj,k.dwdm,k.PL10,k.P10B16,k.P16B25,k.P25B32,k.PG32,k.sjd,k.tjr);
+
+		insert into app_zsfy_zsf (dwfl,PL10,P10B16,P16B25,P25B32,PG32,fbsj) (
+			select a.lb2,avg(PL10) PL10,avg(P10B16) P10B16,avg(P16B25) P16B25,avg(P25B32) P25B32,avg(PG32) PG32,to_char(sysdate,'yyyymmdd')
+				from app_dw a left join app_zsfy_zsfcj b on a.dwdm=b.dwdm where lb2 is not null and b.tjsj=#{c2} and a.lb2 =#{c1} group by a.lb2 );
+		commit;
+		end;
+	</update>
+
+	<update id="fbYqclfHz">
+		BEGIN
+		delete from app_YQCLF_HZ where fbsj=to_char(sysdate,'yyyymmdd') and dwfl=#{c1} and yp=#{c10};
+
+		merge into (select * from app_yqclf_cj ) s
+		using  (select to_char(sysdate,'yyyymmdd') tjsj,#{c10} yp,a.dwdm,NHF,CLF,ZJF,RGF,XLF,QTF,YQCLF,sjd,tjr,a.lb2
+		from app_dw a left join app_yqclf_cj b on a.dwdm=b.dwdm where  tjsj=#{c2} and  lb2=#{c1} and  lb2 is not null and yp=#{c10}) k
+		on (s.tjsj=k.tjsj and s.dwdm=k.dwdm  and s.tjsj=to_char(sysdate,'yyyymmdd') and s.yp=k.yp
+		and s.dwdm in (select dwdm from app_dw where lb2=#{c1}))
+            when matched then
+        update set nhf=k.nhf,clf=k.clf,zjf=k.zjf,rgf=k.rgf,xlf=k.xlf,qtf=k.qtf,yqclf=k.yqclf,sjd=k.sjd
+            when not matched then
+		insert (tjsj,dwdm,yp,NHF,CLF,ZJF,RGF,XLF,QTF,YQCLF,sjd,tjr) values (k.tjsj,k.dwdm,k.yp,k.NHF,k.CLF,k.ZJF,k.RGF,k.XLF,k.QTF,k.YQCLF,k.sjd,k.tjr);
+
+		insert into app_YQCLF_HZ (dwfl,yp,dwYQCLF,fbsj) (
+		select a.lb2,#{c10} yp,
+		avg(yqclf) yqclf,to_char(sysdate,'yyyymmdd')
+		from app_dw a left join app_yqclf_cj b on a.dwdm=b.dwdm where lb2 is not null and b.tjsj=#{c2} and a.lb2 =#{c1} and b.yp=#{c10} group by a.lb2 );
+		commit;
+		end;
+	</update>
+	<update id="fbWsclfHz">
+		BEGIN
+		delete from app_WsCLF_HZ where fbsj=to_char(sysdate,'yyyymmdd') and dwfl=#{c1} and yp=#{c10};
+
+		merge into (select * from app_Wsclf_cj ) s
+		using  (select to_char(sysdate,'yyyymmdd') tjsj,#{c10} yp,a.dwdm,DF,YJF,CLF,ZJF,RGF,XLF,QTF,WSCLF,sjd,tjr,a.lb2
+		from app_dw a left join app_wsclf_cj b on a.dwdm=b.dwdm where  tjsj=#{c2} and  lb2=#{c1} and  lb2 is not null and yp=#{c10}) k
+		on (s.tjsj=k.tjsj and s.dwdm=k.dwdm  and s.tjsj=to_char(sysdate,'yyyymmdd') and s.yp=k.yp
+		and s.dwdm in (select dwdm from app_dw where lb2=#{c1}))
+            when matched then
+        update set df=k.df,yjf=k.yjf,clf=k.clf,zjf=k.zjf,rgf=k.rgf,xlf=k.xlf,qtf=k.qtf,wsclf=k.wsclf,sjd=k.sjd
+            when not matched then
+		insert (tjsj,dwdm,yp,DF,YJF,CLF,ZJF,RGF,XLF,QTF,WSCLF,sjd,tjr) values (k.tjsj,k.dwdm,k.yp,k.DF,K.YJF,k.CLF,k.ZJF,k.RGF,k.XLF,k.QTF,k.WSCLF,k.sjd,k.tjr);
+
+		insert into app_WSCLF_HZ (dwfl,yp,dwWSCLF,fbsj) (
+		select a.lb2,#{c10} yp,
+		avg(wsclf) wsclf,to_char(sysdate,'yyyymmdd')
+		from app_dw a left join app_wsclf_cj b on a.dwdm=b.dwdm where lb2 is not null and b.tjsj=#{c2} and a.lb2 =#{c1} and b.yp=#{c10} group by a.lb2 );
+		commit;
+		end;
+	</update>
+
+	<update id="fbZsfHz2">
+		BEGIN
+		delete from app_ZSFY_zsf2 where fbsj=to_char(sysdate,'yyyymmdd') and dwfl=#{c1};
+
+		merge into (select * from app_zsfy_zsfcj2) s
+		using  (select to_char(sysdate,'yyyymmdd') tjsj,a.dwdm,zsf,zzsf,zzsl,sjd,tjr,a.lb2
+		from app_dw a left join app_zsfy_zsfcj2 b on a.dwdm=b.dwdm where  tjsj=#{c2}
+		and  lb2=#{c1} and  lb2 is not null) k
+		on (s.tjsj=k.tjsj and s.dwdm=k.dwdm  and s.tjsj=to_char(sysdate,'yyyymmdd')
+		and s.dwdm in (select dwdm from app_dw where lb2=#{c1}))
+            when matched then
+        update set zsf=k.zsf,zzsl=k.zzsl,zzsf=k.zzsf,sjd=k.sjd
+		when not matched then
+		insert (tjsj,dwdm,zsf,zzsl,zzsf,sjd,tjr) values (k.tjsj,k.dwdm,k.zsf,k.zzsl,k.zzsf,k.sjd,k.tjr);
+
+		insert into app_zsfy_zsf2 (dwfl,zsf,fbsj) (
+		select a.lb2,avg(zsf) zsf,to_char(sysdate,'yyyymmdd')
+		from app_dw a left join app_zsfy_zsfcj2 b on a.dwdm=b.dwdm where lb2 is not null and b.tjsj=#{c2} and a.lb2 =#{c1} group by a.lb2 );
+		commit;
+		end;
+	</update>
+
+	<update id="fbDlfHz2">
+		BEGIN
+		delete from APP_DLF_HZ2 where fbsj=to_char(sysdate,'yyyymmdd') and dwfl=#{c1};
+
+		merge into (select * from APP_DLF_CJ2) s
+		using  (select to_char(sysdate,'yyyymmdd') tjsj,a.dwdm,dlf,yjs,zdlf,sjd,tjr,a.lb2
+		from app_dw a left join APP_DLF_CJ2 b on a.dwdm=b.dwdm where  tjsj=#{c2}
+		and  lb2=#{c1} and  lb2 is not null) k
+		on (s.tjsj=k.tjsj and s.dwdm=k.dwdm  and s.tjsj=to_char(sysdate,'yyyymmdd')
+		and s.dwdm in (select dwdm from app_dw where lb2=#{c1}))
+            when matched then
+        update set dlf=k.dlf,yjs=k.yjs,zdlf=k.zdlf,sjd=k.sjd
+		when not matched then
+		insert (tjsj,dwdm,dlf,yjs,zdlf,sjd,tjr) values (k.tjsj,k.dwdm,k.dlf,k.yjs,k.zdlf,k.sjd,k.tjr);
+
+		insert into APP_DLF_HZ2 (dwfl,dlf,fbsj) (
+		select a.lb2,avg(dlf) dlf,to_char(sysdate,'yyyymmdd')
+		from app_dw a left join APP_DLF_CJ2 b on a.dwdm=b.dwdm where lb2 is not null and b.tjsj=#{c2} and a.lb2 =#{c1} group by a.lb2 );
+		commit;
+		end;
+	</update>
+
+	<update id="fbCyrcfHz2">
+		BEGIN
+		delete from APP_CYRCF_HZ2 where fbsj=to_char(sysdate,'yyyymmdd') and dwfl=#{c1};
+
+		merge into (select * from APP_CYRCF_CJ2) s
+		using  (select to_char(sysdate,'yyyymmdd') tjsj,a.dwdm,zqf,zql,zzqf,sjd,tjr,a.lb2
+		from app_dw a left join APP_CYRCF_CJ2 b on a.dwdm=b.dwdm where  tjsj=#{c2}
+		and  lb2=#{c1} and  lb2 is not null) k
+		on (s.tjsj=k.tjsj and s.dwdm=k.dwdm  and s.tjsj=to_char(sysdate,'yyyymmdd')
+		and s.dwdm in (select dwdm from app_dw where lb2=#{c1}))
+            when matched then
+        update set zqf=k.zqf,zql=k.zql,zzqf=k.zzqf,sjd=k.sjd
+		when not matched then
+		insert (tjsj,dwdm,zqf,zql,zzqf,sjd,tjr) values (k.tjsj,k.dwdm,k.zqf,k.zql,k.zzqf,k.sjd,k.tjr);
+
+		insert into APP_CYRCF_HZ2 (dwfl,zqf,fbsj) (
+		select a.lb2,avg(zqf) zqf,to_char(sysdate,'yyyymmdd')
+		from app_dw a left join APP_CYRCF_CJ2 b on a.dwdm=b.dwdm where lb2 is not null and b.tjsj=#{c2} and a.lb2 =#{c1} group by a.lb2 );
+		commit;
+		end;
+	</update>
+
+	<update id="fbZywhfHz2">
+		BEGIN
+		delete from APP_ZYWHF_HZ2 where fbsj=to_char(sysdate,'yyyymmdd') and dwfl=#{c1};
+
+		merge into (select * from APP_ZYWHF_CJ2) s
+		using  (select to_char(sysdate,'yyyymmdd') tjsj,a.dwdm,zyf,zcf,csf,whf,sjd,tjr,a.lb2
+		from app_dw a left join APP_ZYWHF_CJ2 b on a.dwdm=b.dwdm where  tjsj=#{c2}
+		and  lb2=#{c1} and  lb2 is not null) k
+		on (s.tjsj=k.tjsj and s.dwdm=k.dwdm  and s.tjsj=to_char(sysdate,'yyyymmdd')
+		and s.dwdm in (select dwdm from app_dw where lb2=#{c1}))
+            when matched then
+        update set zyf=k.zyf,zcf=k.zcf,csf=k.csf,whf=k.whf,sjd=k.sjd
+		when not matched then
+		insert (tjsj,dwdm,zyf,zcf,csf,whf,sjd,tjr) values (k.tjsj,k.dwdm,k.zyf,k.zcf,k.csf,k.whf,k.sjd,k.tjr);
+
+		insert into APP_ZYWHF_HZ2 (dwfl,zyf,fbsj) (
+		select a.lb2,avg(zyf) zyf,to_char(sysdate,'yyyymmdd')
+		from app_dw a left join APP_ZYWHF_CJ2 b on a.dwdm=b.dwdm where lb2 is not null and b.tjsj=#{c2} and a.lb2 =#{c1} group by a.lb2 );
+		commit;
+		end;
+	</update>
+
+	<update id="fbCjsjfHz2">
+		BEGIN
+		delete from APP_CJSJF_HZ2 where fbsj=to_char(sysdate,'yyyymmdd') and dwfl=#{c1};
+
+		merge into (select * from APP_CJSJF_CJ2) s
+		using  (select to_char(sysdate,'yyyymmdd') tjsj,a.dwdm,cjsjf,yjf,sjf,qxjf,sjd,tjr,a.lb2
+		from app_dw a left join APP_CJSJF_CJ2 b on a.dwdm=b.dwdm where  tjsj=#{c2}
+		and  lb2=#{c1} and  lb2 is not null) k
+		on (s.tjsj=k.tjsj and s.dwdm=k.dwdm  and s.tjsj=to_char(sysdate,'yyyymmdd')
+		and s.dwdm in (select dwdm from app_dw where lb2=#{c1}))
+            when matched then
+        update set cjsjf=k.cjsjf,yjf=k.yjf,sjf=k.sjf,qxjf=k.qxjf,sjd=k.sjd
+		when not matched then
+		insert (tjsj,dwdm,cjsjf,yjf,sjf,qxjf,sjd,tjr) values (k.tjsj,k.dwdm,k.cjsjf,k.yjf,k.sjf,k.qxjf,k.sjd,k.tjr);
+
+		insert into APP_CJSJF_HZ2 (dwfl,cjsjf,fbsj) (
+		select a.lb2,avg(cjsjf) cjsjf,to_char(sysdate,'yyyymmdd')
+		from app_dw a left join APP_CJSJF_CJ2 b on a.dwdm=b.dwdm where lb2 is not null and b.tjsj=#{c2} and a.lb2 =#{c1} group by a.lb2 );
+		commit;
+		end;
+	</update>
+
+	<update id="fbWhxlfHz2">
+    BEGIN
+    delete from APP_WHXLF_HZ2 where fbsj=to_char(sysdate,'yyyymmdd') and dwfl=#{c1};
+
+    merge into (select * from APP_WHXLF_CJ2) s
+    using  (select to_char(sysdate,'yyyymmdd') tjsj,a.dwdm,whxlf,sjd,tjr,a.lb2
+    from app_dw a left join APP_WHXLF_CJ2 b on a.dwdm=b.dwdm where  tjsj=#{c2}
+    and  lb2=#{c1} and  lb2 is not null) k
+    on (s.tjsj=k.tjsj and s.dwdm=k.dwdm  and s.tjsj=to_char(sysdate,'yyyymmdd')
+    and s.dwdm in (select dwdm from app_dw where lb2=#{c1}))
+        when matched then
+    update set whxlf=k.whxlf,sjd=k.sjd
+    when not matched then
+    insert (tjsj,dwdm,whxlf,sjd,tjr) values (k.tjsj,k.dwdm,k.whxlf,k.sjd,k.tjr);
+
+    insert into APP_WHXLF_HZ2 (dwfl,whxlf,fbsj) (
+    select a.lb2,avg(whxlf) whxlf,to_char(sysdate,'yyyymmdd')
+    from app_dw a left join APP_WHXLF_CJ2 b on a.dwdm=b.dwdm where lb2 is not null and b.tjsj=#{c2} and a.lb2 =#{c1} group by a.lb2 );
+    commit;
+    end;
+</update>
+
+    <update id="fbYqtsqtfHz">
+        BEGIN
+        delete from APP_YQTS_QT where fbsj=to_char(sysdate,'yyyymmdd') and dwfl=#{c1};
+
+        merge into (select * from APP_YQTS_qtCJ) s
+        using  (select to_char(sysdate,'yyyymmdd') tjsj,a.dwdm,qtf,sjd,tjr,a.lb2
+        from app_dw a left join APP_YQTS_qtCJ b on a.dwdm=b.dwdm where  tjsj=#{c2}
+        and  lb2=#{c1} and  lb2 is not null) k
+        on (s.tjsj=k.tjsj and s.dwdm=k.dwdm  and s.tjsj=to_char(sysdate,'yyyymmdd')
+        and s.dwdm in (select dwdm from app_dw where lb2=#{c1}))
+        when matched then
+            update set qtf=k.qtf,sjd=k.sjd
+        when not matched then
+        insert (tjsj,dwdm,qtf,sjd,tjr) values (k.tjsj,k.dwdm,k.qtf,k.sjd,k.tjr);
+
+        insert into APP_YQTS_qt (dwfl,qtf,fbsj) (
+        select a.lb2,avg(qtf) qtf,to_char(sysdate,'yyyymmdd')
+        from app_dw a left join APP_YQTS_qtCJ b on a.dwdm=b.dwdm where lb2 is not null and b.tjsj=#{c2} and a.lb2 =#{c1} group by a.lb2 );
+        commit;
+        end;
+    </update>
+
+    <update id="fbYqtsqtfHz2">
+        BEGIN
+        delete from APP_YQTS_QT2 where fbsj=to_char(sysdate,'yyyymmdd') and dwfl=#{c1};
+
+        merge into (select * from APP_YQTS_qtCJ2) s
+        using  (select to_char(sysdate,'yyyymmdd') tjsj,a.dwdm,qtf,sjd,tjr,a.lb2
+        from app_dw a left join APP_YQTS_qtCJ2 b on a.dwdm=b.dwdm where  tjsj=#{c2}
+        and  lb2=#{c1} and  lb2 is not null) k
+        on (s.tjsj=k.tjsj and s.dwdm=k.dwdm  and s.tjsj=to_char(sysdate,'yyyymmdd')
+        and s.dwdm in (select dwdm from app_dw where lb2=#{c1}))
+            when matched then
+        update set qtf=k.qtf,sjd=k.sjd
+        when not matched then
+        insert (tjsj,dwdm,qtf,sjd,tjr) values (k.tjsj,k.dwdm,k.qtf,k.sjd,k.tjr);
+
+        insert into APP_YQTS_qt2 (dwfl,qtf,fbsj) (
+        select a.lb2,avg(qtf) qtf,to_char(sysdate,'yyyymmdd')
+        from app_dw a left join APP_YQTS_qtCJ2 b on a.dwdm=b.dwdm where lb2 is not null and b.tjsj=#{c2} and a.lb2 =#{c1} group by a.lb2 );
+        commit;
+        end;
+    </update>
+
+	<update id="fbYqclfHz2">
+    BEGIN
+    delete from APP_YQCLF_HZ2 where fbsj=to_char(sysdate,'yyyymmdd') and dwfl=#{c1} and yp=#{c10};
+
+    merge into (select * from APP_YQCLF_CJ2) s
+    using  (select to_char(sysdate,'yyyymmdd') tjsj,a.dwdm,YQCLF,cll,zYQCLF,sjd,tjr,a.lb2,yp
+    from app_dw a left join APP_YQCLF_CJ2 b on a.dwdm=b.dwdm where  tjsj=#{c2}
+    and  lb2=#{c1} and  lb2 is not null and yp=#{c10}) k
+    on (s.tjsj=k.tjsj and s.dwdm=k.dwdm  and s.tjsj=to_char(sysdate,'yyyymmdd') and s.yp=k.yp
+    and s.dwdm in (select dwdm from app_dw where lb2=#{c1}))
+        when matched then
+    update set cll=k.cll,zyqclf=k.zyqclf,yqclf=k.yqclf,sjd=k.sjd
+    when not matched then
+    insert (tjsj,dwdm,YQCLF,cll,zYQCLF,sjd,tjr,yp) values (k.tjsj,k.dwdm,k.YQCLF,k.cll,k.zYQCLF,k.sjd,k.tjr,k.yp);
+
+    insert into APP_YQCLF_HZ2 (dwfl,yp,yqclf,fbsj) (
+    select a.lb2,yp,avg(yqclf) yqclf,to_char(sysdate,'yyyymmdd')
+    from app_dw a left join APP_YQCLF_CJ2 b on a.dwdm=b.dwdm where lb2 is not null and b.tjsj=#{c2} and a.lb2 =#{c1} and yp=#{c10} group by a.lb2,yp );
+    commit;
+    end;
+</update>
+
+    <update id="fbWsclfHz2">
+        BEGIN
+        delete from APP_WSCLF_HZ2 where fbsj=to_char(sysdate,'yyyymmdd') and dwfl=#{c1} and yp=#{c10};
+
+        merge into (select * from APP_WSCLF_CJ2) s
+        using  (select to_char(sysdate,'yyyymmdd') tjsj,a.dwdm,WSCLF,cll,zWSCLF,sjd,tjr,a.lb2,yp
+        from app_dw a left join APP_WSCLF_CJ2 b on a.dwdm=b.dwdm where  tjsj=#{c2}
+        and  lb2=#{c1} and  lb2 is not null and yp=#{c10}) k
+        on (s.tjsj=k.tjsj and s.dwdm=k.dwdm  and s.tjsj=to_char(sysdate,'yyyymmdd') and s.yp=k.yp
+        and s.dwdm in (select dwdm from app_dw where lb2=#{c1}))
+            when matched then
+        update set wsclf=k.wsclf,cll=k.cll,zwsclf=k.zwsclf,sjd=k.sjd
+        when not matched then
+        insert (tjsj,dwdm,WSCLF,cll,zWSCLF,sjd,tjr,yp) values (k.tjsj,k.dwdm,k.WSCLF,k.cll,k.zWSCLF,k.sjd,k.tjr,k.yp);
+
+        insert into APP_WSCLF_HZ2 (dwfl,yp,wsclf,fbsj) (
+        select a.lb2,yp,avg(WSCLF) WSCLF,to_char(sysdate,'yyyymmdd')
+        from app_dw a left join APP_WSCLF_CJ2 b on a.dwdm=b.dwdm where lb2 is not null and b.tjsj=#{c2} and a.lb2 =#{c1} and yp=#{c10} group by a.lb2,yp );
+        commit;
+        end;
+    </update>
+
+	<update id="updZsfcj">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update APP_zsfy_zsfcj
+			set PL10=#{record.PL10},P10B16=#{record.P10B16},P16B25=#{record.P16B25},
+			P25B32=#{record.P25B32},PG32=#{record.PG32}  where tjsj=#{record.TJSJ} and dwdm=#{record.DWDM};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+	<update id="updZsfcj2">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update APP_zsfy_zsfcj2
+			set ZZSF=#{record.ZZSF},ZZSL=#{record.ZZSL},ZSF=#{record.ZSF}  where tjsj=#{record.TJSJ} and dwdm=#{record.DWDM};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+
+	<update id="updDlfcj2">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update APP_DLF_CJ2
+			set ZDLF=#{record.ZDLF},YJS=#{record.YJS},DLF=#{record.DLF}  where tjsj=#{record.TJSJ} and dwdm=#{record.DWDM};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+	<update id="updCyrcfcj2">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update APP_CyrcF_CJ2
+			set ZzqF=#{record.ZZQF},ZQL=#{record.ZQL},ZQF=#{record.ZQF}  where tjsj=#{record.TJSJ} and dwdm=#{record.DWDM};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+
+	<update id="updZywhfcj2">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update APP_ZywhF_CJ2
+			set zyf=#{record.ZYF},ZCF=#{record.ZCF},CSF=#{record.CSF},WHF=#{record.WHF}  where tjsj=#{record.TJSJ} and dwdm=#{record.DWDM};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+
+	<update id="updCjsjfcj2">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update APP_CjsjF_CJ2
+			set CJSJF=#{record.CJSJF},yjf=#{record.YJF},sjf=#{record.SJF},QXJF=#{record.QXJF}  where tjsj=#{record.TJSJ} and dwdm=#{record.DWDM};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+
+	<update id="updWhxlfcj2">
+		BEGIN
+		<foreach collection="list" item="record" index="index">
+			update APP_WHXLF_CJ2
+			set WHXLF=#{record.WHXLF}  where tjsj=#{record.TJSJ} and dwdm=#{record.DWDM};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+
+    <update id="updYqtsqtfcj">
+        BEGIN
+        <foreach collection="list" item="record" index="index">
+            update APP_YQTS_qtCJ
+            set qtf=#{record.QTF}  where tjsj=#{record.TJSJ} and dwdm=#{record.DWDM};
+        </foreach>
+        COMMIT;
+        END;
+    </update>
+
+    <update id="updYqtsqtfcj2">
+        BEGIN
+        <foreach collection="list" item="record" index="index">
+            update APP_YQTS_qtCJ2
+            set qtf=#{record.qtf}  where tjsj=#{record.TJSJ} and dwdm=#{record.DWDM};
+        </foreach>
+        COMMIT;
+        END;
+    </update>
+
+	<update id="updYqclfcj2">
+		BEGIN
+		<foreach collection="list" item="record" index="index">
+			update APP_YQCLF_CJ2
+			set ZYQCLF=#{record.ZYQCLF},CLL=#{record.CLL},YQCLF=#{record.YQCLF}  where tjsj=#{record.TJSJ} and dwdm=#{record.DWDM} and yp=#{record.YP};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+
+    <update id="updWsclfcj2">
+        BEGIN
+        <foreach collection="list" item="record" index="index">
+            update APP_WSCLF_CJ2
+            set ZWSCLF=#{record.ZWSCLF},CLL=#{record.CLL},WSCLF=#{record.WSCLF}  where tjsj=#{record.TJSJ} and dwdm=#{record.DWDM} and yp=#{record.YP};
+        </foreach>
+        COMMIT;
+        END;
+    </update>
+
+	<update id="fbZsfGlq">
+		merge into APP_ZSFY_ZSFJCSJ a using(select dwdm,nd,sum(PL10)PL10,sum(P10B16)P10B16,sum(P16B25)P16B25,
+                                                sum(P25B32)P25B32,sum(PG32)PG32 from APP_ZSFY_ZSFGLQ
+			where nd between ${c3} and ${c4} and dwdm=#{c1} and zbbm in ('3','5','7','9','11','13') group by dwdm,nd) b
+		on (a.nd=b.nd and a.dwdm=b.dwdm)
+		when matched then
+		update set a.PL10=b.PL10,a.P10B16=b.P10B16,a.P16B25=b.P16B25,a.P25B32=b.P25B32,a.PG32=b.PG32
+		when not matched then
+		insert (nd,dwdm,PL10,P10B16,P16B25,P25B32,PG32) values(b.nd,b.dwdm,b.PL10,b.P10B16,b.P16B25,b.P25B32,b.PG32)
+
+	</update>
+
+	<update id="fbDlfGlq2">
+		merge into APP_DLF_JCSJ2 a using(select dwdm,nd,avg(YJS)YJS,avg(ZDLF)ZDLF,avg(DLF)DLF
+		 from APP_DLF_GLQ2
+		where nd between ${c3} and ${c4} and dwdm=#{c1} group by dwdm,nd) b
+		on (a.nd=b.nd and a.dwdm=b.dwdm)
+		when matched then
+		update set a.YJS=b.YJS,a.ZDLF=b.ZDLF,a.DLF=b.DLF
+		when not matched then
+		insert (nd,dwdm,YJS,ZDLF,DLF) values(b.nd,b.dwdm,b.YJS,b.ZDLF,b.DLF)
+
+	</update>
+
+	<update id="fbCyrcfGlq2">
+		merge into APP_CYRCF_JCSJ2 a using(select dwdm,nd,avg(ZQL)ZQL,avg(ZZQF)ZZQF,avg(ZQF)ZQF
+		from APP_CYRCF_GLQ2
+		where nd between ${c3} and ${c4} and dwdm=#{c1} group by dwdm,nd) b
+		on (a.nd=b.nd and a.dwdm=b.dwdm)
+		when matched then
+		update set a.ZQL=b.ZQL,a.ZZQF=b.ZZQF,a.ZQF=b.ZQF
+		when not matched then
+		insert (nd,dwdm,ZQL,ZZQF,ZQF) values(b.nd,b.dwdm,b.ZQL,b.ZZQF,b.ZQF)
+
+	</update>
+
+	<update id="fbZywhfGlq2">
+		merge into APP_ZYWHF_JCSJ2 a using(select dwdm,nd,avg(ZYF)ZYF,avg(ZCF)ZCF,avg(WHF)WHF,avg(CSF)csf
+		from APP_ZYWHF_GLQ2
+		where nd between ${c3} and ${c4} and dwdm=#{c1} group by dwdm,nd) b
+		on (a.nd=b.nd and a.dwdm=b.dwdm)
+		when matched then
+		update set a.ZYF=b.ZYF,a.ZCF=b.ZCF,a.CSF=b.CSF,a.WHF=b.WHF
+		when not matched then
+		insert (nd,dwdm,ZYF,ZCF,CSF,WHF) values(b.nd,b.dwdm,b.ZYF,b.ZCF,b.CSF,b.WHF)
+
+	</update>
+
+	<update id="fbCjsjfGlq2">
+		merge into APP_CJSJF_JCSJ2 a using(select dwdm,nd,sum(CJSJF)CJSJF,sum(YJF)YJF,sum(SJF)SJF,sum(QXJF)QXJF
+		from APP_CJSJF_GLQ2
+		where nd between ${c3} and ${c4} and dwdm=#{c1} group by dwdm,nd) b
+		on (a.nd=b.nd and a.dwdm=b.dwdm)
+		when matched then
+		update set a.CJSJF=b.CJSJF,a.YJF=b.YJF,a.SJF=b.SJF,a.QXJF=b.QXJF
+		when not matched then
+		insert (nd,dwdm,CJSJF,YJF,SJF,QXJF) values(b.nd,b.dwdm,b.CJSJF,b.YJF,b.SJF,b.QXJF)
+
+	</update>
+	<update id="fbWhxlfGlq2">
+		merge into APP_WHXLF_JCSJ2 a using(select dwdm,nd,avg(WHXLF)WHXLF
+		from APP_WHXLF_GLQ2
+		where nd between ${c3} and ${c4} and dwdm=#{c1} group by dwdm,nd) b
+		on (a.nd=b.nd and a.dwdm=b.dwdm)
+		when matched then
+		update set a.WHXLF=b.WHXLF
+		when not matched then
+		insert (nd,dwdm,WHXLF) values(b.nd,b.dwdm,b.WHXLF)
+
+	</update>
+
+    <update id="fbYqtsqtfGlq">
+        merge into APP_YQTS_qtJCSJ a using(select dwdm,nd,sum(QTF)QtF,avg(YJS)YJS,sum(ZQTF)ZQTF
+        from APP_YQTS_qtGLQ
+        where nd between ${c3} and ${c4} and dwdm=#{c1} group by dwdm,nd) b
+        on (a.nd=b.nd and a.dwdm=b.dwdm)
+        when matched then
+        update set a.QTF=b.QTF,a.YJS=b.YJS,a.ZQTF=b.ZQTF
+        when not matched then
+        insert (nd,dwdm,qtF,YJs,zqtF) values(b.nd,b.dwdm,b.qtF,b.YJs,b.zqtF)
+
+    </update>
+
+    <update id="fbYqtsqtfGlq2">
+        merge into APP_YQTS_qtJCSJ2 a using(select dwdm,nd,sum(QTF)zQtF,avg(YJS)YJS
+        from APP_YQTS_qtGLQ2
+        where nd between ${c3} and ${c4} and dwdm=#{c1} group by dwdm,nd) b
+        on (a.nd=b.nd and a.dwdm=b.dwdm)
+        when matched then
+        update set a.QTF=b.zQTF/b.yjs,a.YJS=b.YJS,a.ZQTF=b.ZQTF
+        when not matched then
+        insert (nd,dwdm,qtF,YJs,zqtF) values(b.nd,b.dwdm,b.zQTF/b.yjs,b.YJs,b.zqtF)
+
+    </update>
+
+	<update id="fbYqclfGlq2">
+		merge into APP_YQCLF_JCSJ2 a using(select #{c10} yp,dwdm,nd,avg(CLL)CLL,avg(ZYQCLF)ZYQCLF,avg(YQCLF)YQCLF
+		from APP_YQCLF_GLQ2
+		where nd between ${c3} and ${c4} and dwdm=#{c1} and yp=#{c10} group by dwdm,nd) b
+		on (a.nd=b.nd and a.dwdm=b.dwdm and a.yp=b.yp)
+		when matched then
+		update set a.CLL=b.CLL,a.ZYQCLF=b.ZYQCLF,a.YQCLF=b.YQCLF
+		when not matched then
+		insert (nd,dwdm,CLL,ZYQCLF,YQCLF,yp) values(b.nd,b.dwdm,b.CLL,b.ZYQCLF,b.YQCLF,b.yp)
+
+	</update>
+
+    <update id="fbWsclfGlq2">
+        merge into APP_WSCLF_JCSJ2 a using(select #{c10} yp,dwdm,nd,avg(CLL)CLL,avg(ZWSCLF)ZWSCLF,avg(WSCLF)WSCLF
+        from APP_WSCLF_GLQ2
+        where nd between ${c3} and ${c4} and dwdm=#{c1} and yp=#{c10} group by dwdm,nd) b
+        on (a.nd=b.nd and a.dwdm=b.dwdm and a.yp=b.yp)
+        when matched then
+        update set a.CLL=b.CLL,a.ZWSCLF=b.ZWSCLF,a.WSCLF=b.WSCLF
+        when not matched then
+        insert (nd,dwdm,CLL,ZWSCLF,WSCLF,yp) values(b.nd,b.dwdm,b.CLL,b.ZWSCLF,b.WSCLF,b.yp)
+
+    </update>
+
+	<update id="fbYqclfGlq">
+		merge into APP_YQCLF_JCSJ a using(select dwdm,nd,yp,sum(DYCLF) NHF,sum(DYZJF)ZJF,sum(DYCLF)CLF,
+		sum(DYRGF)RGF,sum(DYXLF)XLF,sum(DYQT) QTF from APP_YQCLF_GLQ
+		where nd between ${c3} and ${c4} and dwdm=#{c1}  group by dwdm,nd,yp) b
+		on (a.nd=b.nd and a.dwdm=b.dwdm and a.yp=b.yp)
+		when matched then
+		update set a.NHF=b.NHF,
+					a.CLF=b.CLF,
+					a.ZJF=b.ZJF,
+					a.RGF=b.RGF,
+					a.XLF=b.XLF,
+					a.QTF=b.QTF
+		when not matched then
+		insert (
+				ND,
+				DWDM,
+				YP,
+				NHF,
+				CLF,
+				ZJF,
+				RGF,
+				XLF,
+				QTF,
+				YQCLF) values(
+				b.ND,
+				b.DWDM,
+				b.YP,
+				b.NHF,
+				b.CLF,
+				b.ZJF,
+				b.RGF,
+				b.XLF,
+				b.QTF,
+				nvl(b.NHF,0)+nvl(b.CLF,0)+nvl(b.ZJF,0)+nvl(b.RGF,0)+nvl(b.XLF,0)+nvl(b.QTF,0))
+	</update>
+
+
+	<update id="fbWsclfGlq">
+		merge into APP_WSCLF_JCSJ a using(select dwdm,nd,yp,sum(DYDF) DF,sum(DYZJF)ZJF,
+		sum(DYRGF)RGF,sum(DYXLF)XLF,sum(DYQT) QTF,sum(CLF) CLF,sum(YJF) YJF from APP_WSCLF_GLQ
+		where nd between ${c3} and ${c4} and dwdm=#{c1}  group by dwdm,nd,yp) b
+		on (a.nd=b.nd and a.dwdm=b.dwdm and a.yp=b.yp)
+		when matched then
+		update set a.DF=b.DF,
+		a.ZJF=b.ZJF,
+		a.RGF=b.RGF,
+		a.XLF=b.XLF,
+	    a.CLF=b.CLF,
+		a.QTF=b.QTF
+		when not matched then
+		insert (
+		ND,
+		DWDM,
+		YP,
+		DF,
+		CLF,
+		ZJF,
+		RGF,
+		XLF,
+		QTF,
+		WSCLF) values(
+		b.ND,
+		b.DWDM,
+		b.YP,
+		b.DF,
+		b.CLF,
+		b.ZJF,
+		b.RGF,
+		b.XLF,
+		b.QTF,
+		nvl(b.DF,0)+nvl(b.CLF,0)+nvl(b.ZJF,0)+nvl(b.RGF,0)+nvl(b.XLF,0)+nvl(b.QTF,0)+nvl(b.YJF,0))
+	</update>
+
+    <update id="updDlfhz">
+        merge into APP_DLF_YQT a using
+        (select #{hm.c1} yqtdm,to_char(sysdate,'yyyymmdd') fbsj,#{hm.c2} yclx,#{hm.c3} jclx,#{hm.c4} hs,
+         #{hm.c5}||'-'||#{hm.c6} sjd,#{mmmm.cscl} q0,#{mmmm.csdjl} a0,#{mmmm.djlx} qxlx,#{mmmm.xgxs} xgxs,
+         #{mmmm.pdxs} pdxs,#{mmmm.tss} tss,#{mmmm.ess} ess,#{mmmm.x0} x0 from dual) b
+         on (a.yqtdm=b.yqtdm and a.fbsj=b.fbsj and a.yclx=b.yclx and a.hs=b.hs)
+         when matched then
+         update set a.SJD=b.SJD,
+                    a.Q0=b.Q0,
+                    a.A0=b.A0,
+                    a.QXLX=b.QXLX,
+                    a.XGXS=b.XGXS,
+                    a.PDXS=b.PDXS,
+                    a.TSS=b.TSS,
+                    a.ESS=b.ESS,
+		            a.X0=b.X0
+         when not matched then
+         insert
+         (YQTDM,
+            FBSJ,
+            YCLX,
+            JCLX,
+            HS,
+            SJD,
+            Q0,
+            A0,
+            QXLX,
+            XGXS,
+            PDXS,
+            TSS,
+            ESS,
+		 x0) values (b.YQTDM,
+            b.FBSJ,
+            b.YCLX,
+            b.JCLX,
+            b.HS,
+            b.SJD,
+            b.Q0,
+            b.A0,
+            b.QXLX,
+            b.XGXS,
+            b.PDXS,
+            b.TSS,
+            b.ESS,b.X0)
+
+    </update>
+	<update id="updAqscf">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update APP_AQSCF_HZ
+			set SY=#{record.SY},TRQ=#{record.TRQ} where fbsj=#{record.FBSJ};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+
+	<update id="updCwf">
+		BEGIN
+
+		<foreach collection="list" item="record" index="index">
+			update APP_CWF_HZ
+			set DKBL=#{record.DKBL},DKNLL=#{record.DKNLL} where fbsj=#{record.FBSJ};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+	<update id="updYqclf">
+		BEGIN
+		<foreach collection="list" item="record" index="index">
+			update APP_YQCLF_CJ
+			set NHF=#{record.NHF},CLF=#{record.CLF},ZJF=#{record.ZJF},
+			RGF=#{record.RGF},XLF=#{record.XLF},QTF=#{record.QTF},YQCLF=#{record.YQCLF}
+			where YP=#{record.YP2} and tjsj=#{record.TJSJ} and dwdm=#{record.DWDM};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+	<update id="updWsclf">
+		BEGIN
+		<foreach collection="list" item="record" index="index">
+			update APP_WSCLF_CJ
+			set DF=#{record.DF},CLF=#{record.CLF},ZJF=#{record.ZJF},YJF=#{record.YJF},
+			RGF=#{record.RGF},XLF=#{record.XLF},QTF=#{record.QTF},WSCLF=#{record.WSCLF}
+			where YP=#{record.YP2} and tjsj=#{record.TJSJ} and dwdm=#{record.DWDM};
+		</foreach>
+		COMMIT;
+		END;
+	</update>
+
+	<select id="getCbhz" parameterType="hashmap" resultType="hashmap">
+		select a.lb1 dwfl,b.id,b.zsg,b.lwg,b.cnxmdy,b.qt,nvl(b.fbsj,'19000101') fbsj
+			  from (select distinct lb1 from app_dw where lb1 is not null) a
+			  left join (select t.*, rank() over(partition by dwfl order by fbsj desc) f
+						   from app_rgcb_hz t) b
+				on a.lb1 = b.dwfl
+			 where nvl(b.f,1) = 1
+	</select>
+	<select id="getCbcj" parameterType="Condition" resultType="hashmap">
+        select d.dwdm,t.*, d.dwjc from app_dw d left join APP_RGCB_CJ t
+        on t.dwdm=d.dwdm and t.tjsj=#{c2} where d.lb1=#{c1}
+         order by d.xssx
+	</select>
+
+	<select id="getRgCbGlq" parameterType="Condition" resultType="hashmap">
+		select t.* from APP_RGCB_GLQ t where dwdm=#{c1} and nd between #{c3} and #{c4}
+	</select>
+	<select id="getDw" resultType="java.util.HashMap">
+		select * from app_dw where dwjc is not null and  dlevel=2 order by xssx
+	</select>
+
+	<select id="getYt" resultType="java.util.HashMap">
+		select distinct yqtdm,yqtmc from APP_YQT t where nd='201701'
+	</select>
+	<select id="getYqtshz" resultType="java.util.HashMap">
+		select a.lb1 dwfl,b.id,b.DJCGCLF,nvl(b.fbsj,'19000101') fbsj
+			  from (select distinct lb1 from app_dw where lb1 is not null) a
+			  left join (select t.*, rank() over(partition by dwfl order by fbsj desc) f
+						   from APP_YQTS_CLF t) b
+				on a.lb1 = b.dwfl
+			 where nvl(b.f,1) = 1
+	</select>
+
+	<select id="getYqtsRlfhz" resultType="java.util.HashMap">
+		select * from (select t.* from APP_YQTS_RLF t order by fbsj desc) where rownum=1
+	</select>
+
+	<select id="getZsfhz" resultType="java.util.HashMap">
+		select a.lb2 dwfl,b.id,b.PL10,b.P10B16,b.P16B25,b.P25B32,b.PG32,nvl(b.fbsj,'19000101') fbsj
+			  from (select distinct lb2 from app_dw where lb2 is not null) a
+			  left join (select t.*, rank() over(partition by dwfl order by fbsj desc) f
+						   from APP_ZSFY_ZSF t) b
+				on a.lb2 = b.dwfl
+			 where nvl(b.f,1) = 1
+	</select>
+
+	<select id="getZsfhz2" resultType="java.util.HashMap">
+		select a.lb2 dwfl,b.id,b.ZSF,nvl(b.fbsj,'19000101') fbsj
+		from (select distinct lb2 from app_dw where lb2 is not null) a
+		left join (select t.*, rank() over(partition by dwfl order by fbsj desc) f
+		from APP_ZSFY_ZSF2 t) b
+		on a.lb2 = b.dwfl
+		where nvl(b.f,1) = 1
+	</select>
+
+	<select id="getDlfhz2" resultType="java.util.HashMap">
+	select a.lb2 dwfl,b.id,b.DLF,nvl(b.fbsj,'19000101') fbsj
+	from (select distinct lb2 from app_dw where lb2 is not null) a
+	left join (select t.*, rank() over(partition by dwfl order by fbsj desc) f
+	from APP_DLF_HZ2 t) b
+	on a.lb2 = b.dwfl
+	where nvl(b.f,1) = 1
+</select>
+
+	<select id="getCyrcfhz2" resultType="java.util.HashMap">
+		select a.lb2 dwfl,b.id,b.ZQF,nvl(b.fbsj,'19000101') fbsj
+		from (select distinct lb2 from app_dw where lb2 is not null) a
+		left join (select t.*, rank() over(partition by dwfl order by fbsj desc) f
+		from APP_CYRCF_HZ2 t) b
+		on a.lb2 = b.dwfl
+		where nvl(b.f,1) = 1
+	</select>
+
+	<select id="getZywhfhz2" resultType="java.util.HashMap">
+		select a.lb2 dwfl,b.id,b.ZYF,nvl(b.fbsj,'19000101') fbsj
+		from (select distinct lb2 from app_dw where lb2 is not null) a
+		left join (select t.*, rank() over(partition by dwfl order by fbsj desc) f
+		from APP_ZYWHF_HZ2 t) b
+		on a.lb2 = b.dwfl
+		where nvl(b.f,1) = 1
+	</select>
+
+
+	<select id="getCjsjfhz2" resultType="java.util.HashMap">
+		select a.lb2 dwfl,b.id,b.CJSJF,nvl(b.fbsj,'19000101') fbsj
+		from (select distinct lb2 from app_dw where lb2 is not null) a
+		left join (select t.*, rank() over(partition by dwfl order by fbsj desc) f
+		from APP_CJSJF_HZ2 t) b
+		on a.lb2 = b.dwfl
+		where nvl(b.f,1) = 1
+	</select>
+
+	<select id="getWhxlfhz2" resultType="java.util.HashMap">
+		select a.lb2 dwfl,b.id,b.WHXLF,nvl(b.fbsj,'19000101') fbsj
+		from (select distinct lb2 from app_dw where lb2 is not null) a
+		left join (select t.*, rank() over(partition by dwfl order by fbsj desc) f
+		from APP_WHXLF_HZ2 t) b
+		on a.lb2 = b.dwfl
+		where nvl(b.f,1) = 1
+	</select>
+
+    <select id="getYqtsqtfhz" resultType="java.util.HashMap">
+    select a.lb2 dwfl,b.id,b.qtF,nvl(b.fbsj,'19000101') fbsj
+    from (select distinct lb2 from app_dw where lb2 is not null) a
+    left join (select t.*, rank() over(partition by dwfl order by fbsj desc) f
+    from APP_yqts_qt t) b
+    on a.lb2 = b.dwfl
+    where nvl(b.f,1) = 1
+</select>
+
+    <select id="getYqtsqtfhz2" resultType="java.util.HashMap">
+        select a.lb2 dwfl,b.id,b.qtF,nvl(b.fbsj,'19000101') fbsj
+        from (select distinct lb2 from app_dw where lb2 is not null) a
+        left join (select t.*, rank() over(partition by dwfl order by fbsj desc) f
+        from APP_yqts_qt2 t) b
+        on a.lb2 = b.dwfl
+        where nvl(b.f,1) = 1
+    </select>
+
+	<select id="getYqtshz2" resultType="java.util.HashMap">
+		select a.lb1 dwfl,b.id,b.CLF,nvl(b.fbsj,'19000101') fbsj
+		from (select distinct lb1 from app_dw where lb1 is not null) a
+		left join (select t.*, rank() over(partition by dwfl order by fbsj desc) f
+		from APP_YQTS_CLF2 t) b
+		on a.lb1 = b.dwfl
+		where nvl(b.f,1) = 1
+	</select>
+	<select id="getYqtsclfGlq" resultType="java.util.HashMap">
+		select t.* from APP_YQTS_CLFGLQ t where dwdm=#{c1} and nd between #{c3} and #{c4}
+	</select>
+	<select id="getYqclfGlq" resultType="java.util.HashMap">
+		select t.* from APP_YQCLF_GLQ t where dwdm=#{c1} and nd between #{c3} and #{c4}
+	</select>
+
+	<select id="getWsclfGlq" resultType="java.util.HashMap">
+		select t.* from APP_WSCLF_GLQ t where dwdm=#{c1} and nd between #{c3} and #{c4}
+	</select>
+	<select id="getZsfGlq" resultType="java.util.HashMap">
+		select t.*,zbmc from APP_ZSFY_ZSFGLQ t,app_zsfy_zb b where b.zbbm=t.zbbm and dwdm=#{c1} and nd between #{c3} and #{c4} order by nd,px
+	</select>
+
+	<select id="getDlfGlq2" resultType="java.util.HashMap">
+		select t.* from APP_DLF_GLQ2 t where dwdm=#{c1} and nd between #{c3} and #{c4}
+	</select>
+
+	<select id="getCyrcfGlq2" resultType="java.util.HashMap">
+		select t.* from APP_CyrcF_GLQ2 t where dwdm=#{c1} and nd between #{c3} and #{c4}
+	</select>
+
+	<select id="getZywhfGlq2" resultType="java.util.HashMap">
+		select t.* from APP_zywhF_GLQ2 t where dwdm=#{c1} and nd between #{c3} and #{c4}
+	</select>
+
+	<select id="getCjsjfGlq2" resultType="java.util.HashMap">
+		select t.* from APP_cjsjF_GLQ2 t where dwdm=#{c1} and nd between #{c3} and #{c4}
+	</select>
+
+    <select id="getYqtsqtfGlq" resultType="java.util.HashMap">
+        select t.* from APP_YQTS_qtGLQ t where dwdm=#{c1} and nd between #{c3} and #{c4}
+    </select>
+
+    <select id="getYqtsqtfGlq2" resultType="java.util.HashMap">
+       select * from ( select t.*,rank()over(partition by nd order by xm) f
+					   from APP_YQTS_qtGLQ2 t where dwdm=#{c1} and nd between #{c3} and #{c4}) order by nd,xm
+    </select>
+
+	<select id="getYqclfGlq2" resultType="java.util.HashMap">
+		select t.* from APP_YQCLF_GLQ2 t where dwdm=#{c1} and nd between #{c3} and #{c4}
+	</select>
+
+	<select id="getWsclfGlq2" resultType="java.util.HashMap">
+		select t.* from APP_WSCLF_GLQ2 t where dwdm=#{c1} and nd between #{c3} and #{c4}
+	</select>
+
+	<select id="getYqtsclfGlq2" resultType="java.util.HashMap">
+		select t.* from APP_YQTS_CLFGLQ2 t where dwdm=#{c1} and nd between #{c3} and #{c4}
+	</select>
+	<select id="getYqtsrlfGlq2" resultType="java.util.HashMap">
+		select t.* from APP_YQTS_RLFGLQ2 t where dwdm=#{c1} and nd between #{c3} and #{c4}
+	</select>
+	<select id="getYqtsclfcj" resultType="java.util.HashMap">
+		select d.dwdm,t.*, d.dwjc from app_dw d left join APP_YQTS_CLFCJ t
+        on t.dwdm=d.dwdm and t.tjsj=#{c2} where d.lb1=#{c1}
+         order by d.xssx
+	</select>
+	<select id="getYqtsclfcj2" resultType="java.util.HashMap">
+		select d.dwdm,t.*, d.dwjc from app_dw d left join APP_YQTS_CLFCJ2 t
+		on t.dwdm=d.dwdm and t.tjsj=#{c2} where d.lb1=#{c1}
+		order by d.xssx
+	</select>
+
+	<select id="getYqtsclfLn" resultType="java.util.HashMap">
+		select substr(tjsj,1,4) tjsj,djcgclf
+		  from (select t.*,
+					   rank() over(partition by dwdm, substr(tjsj, 1, 4) order by tjsj desc) f
+				  from APP_YQTS_CLFCJ t) where f=1 and dwdm=#{c1}
+	</select>
+	<select id="getYqtsclfLn2" resultType="java.util.HashMap">
+		select substr(tjsj,1,4) tjsj,clf
+		from (select t.*,
+		rank() over(partition by dwdm, substr(tjsj, 1, 4) order by tjsj desc) f
+		from APP_YQTS_CLFCJ2 t) where f=1 and dwdm=#{c1}
+	</select>
+	<select id="getYqtsrlfLn2" resultType="java.util.HashMap">
+		select substr(tjsj,1,4) tjsj,rlf
+		from (select t.*,
+		rank() over(partition by dwdm, substr(tjsj, 1, 4) order by tjsj desc) f
+		from APP_YQTS_RLFCJ2 t) where f=1 and dwdm=#{c1}
+	</select>
+	<select id="getYqtsrlfhz2" resultType="java.util.HashMap">
+
+		select a.lb1 dwfl,b.id,b.RLF,nvl(b.fbsj,'19000101') fbsj
+		from (select distinct lb1 from app_dw where lb1 is not null) a
+		left join (select t.*, rank() over(partition by dwfl order by fbsj desc) f
+		from APP_YQTS_RLF2 t) b
+		on a.lb1 = b.dwfl
+		where nvl(b.f,1) = 1
+	</select>
+	<select id="getYqtsrlfcj2" resultType="java.util.HashMap">
+		select d.dwdm,t.*, d.dwjc from app_dw d left join APP_YQTS_RLFCJ2 t
+		on t.dwdm=d.dwdm and t.tjsj=#{c2} where d.lb1=#{c1}
+		order by d.xssx
+	</select>
+	<select id="getZsfcj" resultType="java.util.HashMap">
+		select d.dwdm,t.*, d.dwjc from app_dw d left join APP_ZSFY_ZSFCJ t
+		on t.dwdm=d.dwdm and t.tjsj=#{c2} where d.lb2=#{c1}
+		order by d.xssx
+	</select>
+
+	<select id="getYqclfcj" resultType="java.util.HashMap">
+		select d.dwdm,t.*, d.dwjc,#{c10} yp2 from app_dw d
+		 left join APP_YQCLF_CJ t
+		on t.dwdm=d.dwdm and t.tjsj=#{c2} and t.yp=#{c10} where d.lb2=#{c1}
+		order by d.xssx
+	</select>
+	<select id="getWsclfcj" resultType="java.util.HashMap">
+		select d.dwdm,t.*, d.dwjc,#{c10} yp2 from app_dw d
+		left join APP_WsCLF_CJ t
+		on t.dwdm=d.dwdm and t.tjsj=#{c2} and t.yp=#{c10} where d.lb2=#{c1}
+		order by d.xssx
+	</select>
+
+	<select id="getZsfcj2" resultType="java.util.HashMap">
+		select d.dwdm,t.*, d.dwjc from app_dw d left join APP_ZSFY_ZSFCJ2 t
+		on t.dwdm=d.dwdm and t.tjsj=#{c2} where d.lb2=#{c1}
+		order by d.xssx
+	</select>
+
+	<select id="getDlfcj2" resultType="java.util.HashMap">
+		select d.dwdm,t.*, d.dwjc from app_dw d left join APP_DLF_CJ2 t
+		on t.dwdm=d.dwdm and t.tjsj=#{c2} where d.lb2=#{c1}
+		order by d.xssx
+	</select>
+
+	<select id="getCyrcfcj2" resultType="java.util.HashMap">
+		select d.dwdm,t.*, d.dwjc from app_dw d left join APP_CyrcF_CJ2 t
+		on t.dwdm=d.dwdm and t.tjsj=#{c2} where d.lb2=#{c1}
+		order by d.xssx
+	</select>
+
+	<select id="getZywhfcj2" resultType="java.util.HashMap">
+		select d.dwdm,t.*, d.dwjc from app_dw d left join APP_zywhF_CJ2 t
+		on t.dwdm=d.dwdm and t.tjsj=#{c2} where d.lb2=#{c1}
+		order by d.xssx
+	</select>
+
+
+	<select id="getCjsjfcj2" resultType="java.util.HashMap">
+		select d.dwdm,t.*, d.dwjc from app_dw d left join APP_cjsjF_CJ2 t
+		on t.dwdm=d.dwdm and t.tjsj=#{c2} where d.lb2=#{c1}
+		order by d.xssx
+	</select>
+
+	<select id="getWhxlfcj2" resultType="java.util.HashMap">
+		select d.dwdm,t.*, d.dwjc from app_dw d left join APP_WHXLF_CJ2 t
+		on t.dwdm=d.dwdm and t.tjsj=#{c2} where d.lb2=#{c1}
+		order by d.xssx
+	</select>
+
+    <select id="getYqtsqtfcj" resultType="java.util.HashMap">
+        select d.dwdm,t.*, d.dwjc from app_dw d left join APP_Yqts_qtCJ t
+        on t.dwdm=d.dwdm and t.tjsj=#{c2} where d.lb2=#{c1}
+        order by d.xssx
+    </select>
+
+    <select id="getYqtsqtfcj2" resultType="java.util.HashMap">
+        select d.dwdm,t.*, d.dwjc from app_dw d left join APP_Yqts_qtCJ2 t
+        on t.dwdm=d.dwdm and t.tjsj=#{c2} where d.lb2=#{c1}
+        order by d.xssx
+    </select>
+
+	<select id="getYqclfcj2" resultType="java.util.HashMap">
+		select d.dwdm,t.*, d.dwjc,#{c10} yp2 from app_dw d left join APP_YQCLF_CJ2 t
+		on t.dwdm=d.dwdm and t.tjsj=#{c2}  and yp=#{c10} where d.lb2=#{c1}
+		order by d.xssx
+	</select>
+
+	<select id="getWsclfcj2" resultType="java.util.HashMap">
+		select d.dwdm,t.*, d.dwjc,#{c10} yp2 from app_dw d left join APP_WSCLF_CJ2 t
+		on t.dwdm=d.dwdm and t.tjsj=#{c2}  and yp=#{c10} where d.lb2=#{c1}
+		order by d.xssx
+	</select>
+
+	<select id="getZsfLn" resultType="java.util.HashMap">
+		select substr(tjsj,1,4) tjsj,PL10,P10B16,P16B25,P25B32,PG32
+		from (select t.*,
+		rank() over(partition by dwdm, substr(tjsj, 1, 4) order by tjsj desc) f
+		from APP_ZSFY_ZSFCJ t) where f=1 and dwdm=#{c1}
+
+	</select>
+	<select id="getDba01" resultType="java.util.HashMap">
+
+        <![CDATA[
+        select * from (select a.*,round(decode(bs*rcyl1,0,0,hdl*100/(bs*rcyl1)),4) bh,nvl(rcyl1,0) cyel from app_dba01 a,app_yqt b where a.dydm=b.dydm and yqtdm=#{c1} and yclx=#{c2}
+        and ${c3} and ${c4} and to_char(rq,'yyyymmdd') between #{c5} and #{c6} and nvl(hdl,0)>0 and nvl(bs*rcyl1,0)>0
+        order by nvl(rcyl1,0) ) where bh<1.8
+        ]]>
+
+
+	</select>
+	<select id="getDlfHz" resultType="java.util.HashMap">
+		select * from APP_DLF_YQT where yqtdm=#{c1} and yclx=#{c2} and jclx=#{c3} and hs =#{c4} order by fbsj desc
+	</select>
+
+
+	<!--<select id="getCl" resultType="java.util.HashMap">
+		select * from (select a.*,rownum xx from (select sum(ycyl) ycyl,sum(ycql)ycql,sum(ycsl)ycsl,sum(ycyl+ycsl) ycel,ny  from s_dba04@cw3x4q where dydm in ('BAE5','BAEd','BAEN','BAEM') and ny>='200001' group by ny order by ny) a)
+
+	</select>-->
+	<select id="getCl" resultType="java.util.HashMap">
+		select a.*,rownum xx  from (select rq,kjs,yycl ycyl,trqcl/1000 ycql,csl ycsl,nvl(csl,0)+nvl(yycl,0) ycel,
+										round(trqcl/yycl,2) qyb,trqcllj/1000 ljcql,
+			nxycl nxy,nxycllj ljnxy from CL_SR_CLNH where zcid='1499122742762' order by rq) a
+	</select>
+
+	<select id="getDlfHj" resultType="java.util.HashMap">
+		select b.*,(select yqtmc from app_yqt c where c.yqtdm=b.yqtdm and nd='201701' and rownum=1) yqtmc from (select a.*,rank()over(partition by yqtdm,yclx,jclx,hs order by fbsj desc) f from app_dlf_yqt a) b where f=1
+		<if test="c1 != null and c1 !=''">
+			and yqtdm=#{c1}
+		</if>
+		<if test="c2 != null and c2 !=''">
+			and yclx=#{c2}
+		</if>
+		<if test="c3 != null and c3 !=''">
+			and jclx=#{c3}
+		</if>
+		<if test="c4 != null and c4 !=''">
+			and hs =#{c4}
+		</if>
+
+	</select>
+	<select id="getYclx" resultType="java.util.HashMap">
+		select distinct yclx from APP_JBZQ where nd=to_char(sysdate,'yyyy') and yclx is not null
+	</select>
+
+	<select id="getJclx" resultType="java.util.HashMap">
+		select distinct jclx from APP_JBZQ where nd=to_char(sysdate,'yyyy') and jclx is not null
+	</select>
+
+	<select id="getBsjb" resultType="java.util.HashMap">
+		select distinct bsjb from APP_JBZQ where nd=to_char(sysdate,'yyyy') and bsjb is not null
+	</select>
+	<select id="getZsfs" resultType="java.util.HashMap">
+		select distinct zsfs from APP_JBZQ where nd=to_char(sysdate,'yyyy') and zsfs is not null
+	</select>
+	<select id="getGzlx" resultType="java.util.HashMap">
+		select distinct gzlx from APP_JBZQ where nd=to_char(sysdate,'yyyy') and gzlx is not null
+	</select>
+	<select id="getBsDe" resultType="java.lang.Double">
+		select de-0.2*(bs-#{c9})/100 from (select decode(#{c8},1,jygb,2,jdb,3,rcxb,4,jg,0) de,bs
+		from APP_ZYDE where bs>=#{c9} order by bs) where rownum=1
+	</select>
+	<select id="getBsDes" resultType="java.lang.Double">
+		select de-0.2*(bs-#{c9})/100 from (select jg de,bs
+		from APP_ZYDE where bs>=#{c9} order by bs) where rownum=1
+	</select>
+	<select id="getJbzqY" resultType="java.lang.Double">
+		select decode(#{c4},1,jbzq1,2,jbzq2,jbzq1) jbzq from APP_JBZQ
+		where nd=to_char(sysdate,'yyyy')
+		and yclx=#{c1} and jclx =#{c2} and bsjb =#{c3}
+
+	</select>
+
+	<select id="getJbzqS" resultType="java.lang.Double">
+		select jbzq1 from APP_JBZQ
+		where nd=to_char(sysdate,'yyyy')
+		and zsfs=#{c5} and gzlx =#{c6}
+
+	</select>
+	<select id="getBySql" resultType="java.util.HashMap">
+		${sql}
+	</select>
+	<select id="CjsjfSs" resultType="java.util.HashMap">
+        select jb,nvl(vl,0) vl from (
+			select decode(grouping(jb), 1, '合计', jb) jb,
+				   sum(decode(ceil(xjbl / 100), 1, xjbl / 100 * decode(jb,'油井',nvl(#{c4},0),'注水井',nvl(#{c6},0),'取心井',nvl(#{c8},0),'自喷井',nvl(#{c10},0)), xjbl / 1000) * pc *
+					   (jg + decode(decode(jb,'油井',nvl(#{c4},0),'注水井',nvl(#{c6},0),'取心井',nvl(#{c8},0),'自喷井',nvl(#{c10},0)),0,0,decode(floor(decode(jb,'油井',nvl(#{c5},0),'注水井',nvl(#{c7},0),'取心井',nvl(#{c9},0),'自喷井',nvl(#{c11},0)) / minm), 0, -1, 0) *
+						floor((minm - decode(jb,'油井',nvl(#{c5},0),'注水井',nvl(#{c7},0),'取心井',nvl(#{c9},0),'自喷井',nvl(#{c11},0))) / stepm) * steps +
+						decode(ceil(decode(jb,'油井',nvl(#{c5},0),'注水井',nvl(#{c7},0),'取心井',nvl(#{c9},0),'自喷井',nvl(#{c11},0)) / maxm), 2, 1, 0) * ceil((decode(jb,'油井',nvl(#{c5},0),'注水井',nvl(#{c7},0),'取心井',nvl(#{c9},0),'自喷井',nvl(#{c11},0)) - maxm) / stepm) *
+						steps))) vl
+			  from APP_CJSJF t
+			 where yclx = #{c3}
+			 group by rollup(jb)
+		 )
+	</select>
+	<select id="getWxpl" resultType="java.lang.Double">
+		select nvl(decode(#{c2},1,ybn,2,ebn,3,xxn,4,xxxn,5,zxn,6,dxn,0),0) wxpl from APP_WHXLF t where xl=#{c1}
+		and nd=to_char(sysdate,'yyyy')
+	</select>
+	<select id="getDcwxf" resultType="java.lang.Double">
+		select nvl(#{c3}*decode(#{c2},3,0.05,4,0.05,5,0.2,6,0.3,0),0) dcwxf from APP_WHXLF t where xl=#{c1}
+		and nd=to_char(sysdate,'yyyy')
+	</select>
+	<select id="getWhxlfAll" resultType="java.util.HashMap">
+		select * from APP_WHXLF_HZ where nd=to_char(sysdate,'yyyy')
+	</select>
+	<select id="getAqscfHj" resultType="java.util.HashMap">
+		select * from (select * from APP_AQSCF_HZ order by fbsj desc) where rownum=1
+	</select>
+
+    <select id="getGlfHj" resultType="java.util.HashMap">
+        select * from (select a.*,rank()over(partition by xm order by fbsj desc) f from APP_GLF_HZ a order by fbsj desc) where f=1
+    </select>
+
+    <select id="getXsfHj" resultType="java.util.HashMap">
+        select * from (select a.*,b.lb1,b.dwmc,rank()over(partition by a.dwdm order by fbsj desc) f from APP_XSF_HZ a,app_dw b where a.dwdm=b.dwdm) where f=1 order by lb1
+    </select>
+	<select id="getCwfHj" resultType="java.util.HashMap">
+		select * from (select * from APP_CWF_HZ order by fbsj desc) where rownum=1
+	</select>
+	<select id="getYqtsyjhz" resultType="java.util.HashMap">
+		select * from APP_YQTS_YJ
+	</select>
+	<select id="getYqclfHj" resultType="java.util.HashMap">
+		select a.lb2 dwfl, b.id, b.yp, b.dwyqclf, nvl(b.fbsj, '19000101') fbsj,c.yp yp2
+		  from (select distinct lb2 from app_dw where lb2 is not null) a
+		  left join app_yqclf_yp c
+			on a.lb2 = c.dwfl
+		  left join (select t.*,
+							rank() over(partition by dwfl, yp order by fbsj desc) f
+					   from APP_YQCLF_HZ t) b
+
+			on a.lb2 = b.dwfl  and b.yp=c.yp
+		 where nvl(b.f, 1) = 1
+		 order by c.dwfl
+	</select>
+
+	<select id="getYqclfHj2" resultType="java.util.HashMap">
+		select a.lb2 dwfl, b.id, b.yp, b.yqclf, nvl(b.fbsj, '19000101') fbsj,c.yp yp2
+		from (select distinct lb2 from app_dw where lb2 is not null) a
+		left join app_yqclf_yp c
+		on a.lb2 = c.dwfl
+		left join (select t.*,
+		rank() over(partition by dwfl, yp order by fbsj desc) f
+		from APP_YQCLF_HZ2 t) b
+
+		on a.lb2 = b.dwfl  and b.yp=c.yp
+		where nvl(b.f, 1) = 1
+		order by c.dwfl
+	</select>
+
+	<select id="getWsclfHj2" resultType="java.util.HashMap">
+		select a.lb2 dwfl, b.id, b.yp, b.wsclf, nvl(b.fbsj, '19000101') fbsj,c.yp yp2
+		from (select distinct lb2 from app_dw where lb2 is not null) a
+		left join app_yqclf_yp c
+		on a.lb2 = c.dwfl
+		left join (select t.*,
+		rank() over(partition by dwfl, yp order by fbsj desc) f
+		from APP_wsCLF_HZ2 t) b
+
+		on a.lb2 = b.dwfl  and b.yp=c.yp
+		where nvl(b.f, 1) = 1
+		order by c.dwfl
+	</select>
+
+	<select id="getWsclfHj" resultType="java.util.HashMap">
+		select a.lb2 dwfl, b.id, b.yp, b.dwwsclf, nvl(b.fbsj, '19000101') fbsj,c.yp yp2
+		from (select distinct lb2 from app_dw where lb2 is not null) a
+		left join app_yqclf_yp c
+		on a.lb2 = c.dwfl
+		left join (select t.*,
+		rank() over(partition by dwfl, yp order by fbsj desc) f
+		from APP_WSCLF_HZ t) b
+
+		on a.lb2 = b.dwfl  and b.yp=c.yp
+		where nvl(b.f, 1) = 1
+		order by c.dwfl
+	</select>
+    <select id="getWhzyfDe" resultType="java.util.HashMap">
+		select * from APP_ZYDE t where nd = to_char(sysdate,'yyyy')
+	</select>
+
+	<select id="getNyxhDe" resultType="java.util.HashMap">
+		select * from APP_CYRCF_NYXH t where nd = to_char(sysdate,'yyyy')
+	</select>
+
+	<select id="getZqlwDe" resultType="java.util.HashMap">
+		select * from APP_CYRCF_ZQLW t where nd = to_char(sysdate,'yyyy')
+	</select>
+
+	<select id="getJbzq" resultType="java.util.HashMap">
+
+		select * from aPP_jbzq where nd = to_char(sysdate,'yyyy') and yclx is not null order by px
+	</select>
+	<select id="getJgzq" resultType="java.util.HashMap">
+
+		select * from aPP_jbzq where nd = to_char(sysdate,'yyyy') and yclx is  null order by px
+	</select>
+	<select id="getCjsjDe" resultType="java.util.HashMap">
+
+		select * from APP_CJSJF where nd = to_char(sysdate,'yyyy') and yclx=#{c1}
+	</select>
+    <select id="getWhxlfHz" resultType="java.util.HashMap">
+        select * from (select SBLX	,
+                           WXLX	,
+                           SBYZ	,
+                           round(WXPC/365,1) wxpc,
+                           DCWXF	,
+                           DXWXF	,
+                           rank()over(partition by sblx,wxlx order by sssj desc)  f from APP_WHXLF_HZ a where nd = to_char(sysdate,'yyyy')) where f=1
+
+    </select>
+
+    <select id="getWhxlfDe" resultType="java.util.HashMap">
+
+        select * from APP_WHXLF where nd = to_char(sysdate,'yyyy')
+    </select>
+    <select id="getWhxlfGlq2" resultType="java.util.HashMap">
+		select t.* from APP_WHXLF_GLQ2 t where dwdm=#{c1} and nd between #{c3} and #{c4}
+	</select>
+
+</mapper>

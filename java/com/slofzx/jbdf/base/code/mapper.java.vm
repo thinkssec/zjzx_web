@@ -1,0 +1,93 @@
+package ${package};
+
+import java.util.List;
+import java.util.Date;
+import java.util.HashMap;
+#if(${importDto.bigDecimal})
+import java.math.BigDecimal;
+#end
+
+import org.apache.ibatis.annotations.Param;
+
+import ${basePackage}.bean.${tableDto.upname};
+
+/**
+ * <b>$!{tableDto.comment}[${tableDto.lpname}]数据访问接口</b>
+ * 
+ * <p>
+ * 注意:此文件自动生成-禁止手工修改
+ * </p>
+ * 
+ * @author $!author
+ * @date $!sysdate
+ */
+public interface ${tableDto.upname}Mapper {
+
+	/**
+	 * 插入一个数据持久化对象
+	 *
+	 * @param ${tableDto.lpname}
+	 *            要插入的数据持久化对象
+	 * @return 返回影响行数
+	 */
+	int insert(${tableDto.upname} ${tableDto.lpname});
+
+	/**
+	 * 根据主键修改数据持久化对象
+	 * 
+	 * @param ${tableDto.lpname}
+	 *            要修改的数据持久化对象
+	 * @return int 返回影响行数
+	 */
+	int updateByKey(${tableDto.upname} ${tableDto.lpname});
+
+	/**
+	 * 根据主键查询并返回数据持久化对象
+	 * 
+	 * @return ${tableDto.upname}
+	 */
+	${tableDto.upname} selectByKey(${bykey});
+
+	/**
+	 * 根据唯一组合条件查询并返回数据持久化对象
+	 * 
+	 * @return ${tableDto.upname}
+	 */
+	${tableDto.upname} selectOne(HashMap param);
+
+	/**
+     * 根据param查询并返回数据持久化对象集合
+     *
+     * @return List<${tableDto.upname}>
+     */
+    List<${tableDto.upname}> list(HashMap param);
+
+    /**
+     * 返回分页数据持久化对象集合
+     *
+     * @return List<${tableDto.upname}>
+     */
+    List<${tableDto.upname}> listPage(HashMap param);
+
+    /**
+     * 返回分页数据持久化对象集合form分页
+     *
+     * @return List<${tableDto.upname}>
+     */
+    List<${tableDto.upname}> listPage2(HashMap param);
+
+    /**
+     * 返回分页数据总数
+     *
+     * @return
+     */
+    int listPageCount(HashMap param);
+
+	/**
+	 * 根据主键删除数据持久化对象
+	 *
+	 * @return 影响行数
+	 */
+	int deleteByKey(${bykey});
+	
+}

@@ -1,0 +1,60 @@
+package ${package};
+
+#if(${importDto.bigDecimal})
+import java.math.BigDecimal;
+#end
+#if(${importDto.data})
+import java.util.Date;
+#end
+#if(${importDto.timestamp})
+import java.sql.Timestamp;
+#end
+##java.lang.*下的类型不需要导入
+
+/**
+ * <b>$!{tableDto.comment}[${tableDto.name}]数据持久化对象</b>
+ * <p>
+ * 注意:此文件自动生成-禁止手工修改。
+ * </p>
+ * 
+ * @author $!author
+ * @date $!sysdate
+ */
+public class ${tableDto.upname}{
+
+##变量声明
+#foreach($columnDto in $columnDtos)
+	/**
+	 * ${columnDto.comment}
+	 */
+	private ${columnDto.javatype} ${columnDto.lpname};
+	
+#end
+
+##get方法
+#foreach($columnDto in $columnDtos)
+	/**
+	 * ${columnDto.comment}
+	 * 
+	 * @return ${columnDto.lpname}
+	 */
+	public ${columnDto.javatype} get${columnDto.upname}() {
+		return ${columnDto.lpname};
+	}
+	
+#end
+
+##set方法
+#foreach($columnDto in $columnDtos)
+	/**
+	 * ${columnDto.comment}
+	 * 
+	 * @param ${columnDto.lpname}
+	 */
+	public void set${columnDto.upname}(${columnDto.javatype} ${columnDto.lpname}) {
+		this.${columnDto.lpname} = ${columnDto.lpname};
+	}
+	
+#end
+
+}

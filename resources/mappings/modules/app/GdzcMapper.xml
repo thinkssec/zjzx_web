@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.thinkgem.jeesite.modules.app.mapper.GdzcMapper">
+    <sql id="Base_Column_List">
+        ID, DL1, DL2, FLBM, LB, ZCMC, ERPBM, ZCBM, SL, ZZPH, SYDWMC, SYDWDM, ZGDWMC, ZGDWDM,
+    FZRMC, FZRDM, GGXH, ZBHRQ, ZBHRQ2, YSYNX, ZCYZ, ZJNX, YXZT, DD, BZ, YLZD1, YLZD2,
+    YLZD3, YLZD4
+    </sql>
+    <insert id="insertGdzc">
+        insert into app_gdzc(<include refid="Base_Column_List" />)
+        select uuid() id, #{dl1,jdbcType=VARCHAR} dl1, #{dl2,jdbcType=VARCHAR} dl2,
+        #{flbm,jdbcType=VARCHAR} flbm, #{lb,jdbcType=VARCHAR} lb, #{zcmc,jdbcType=VARCHAR} zcmc, #{erpbm,jdbcType=VARCHAR} erpbm,
+        #{zcbm,jdbcType=VARCHAR} zcbm, #{sl,jdbcType=VARCHAR} sl, #{zzph,jdbcType=VARCHAR} zzph, #{sydwmc,jdbcType=VARCHAR} sydwmc,
+        #{sydwdm,jdbcType=VARCHAR} sydwdm, #{zgdwmc,jdbcType=VARCHAR} zgdwmc, #{zgdwdm,jdbcType=VARCHAR} zgdwdm,
+        #{fzrmc,jdbcType=VARCHAR} fzrmc, #{fzrdm,jdbcType=VARCHAR} fzrdm, #{ggxh,jdbcType=VARCHAR} ggxh,
+        #{zbhrq,jdbcType=VARCHAR} zbhrq, #{zbhrq2,jdbcType=DATE} zbhrq2, #{ysynx,jdbcType=VARCHAR} ysynx, #{zcyz,jdbcType=VARCHAR} zcyz,
+        #{zjnx,jdbcType=VARCHAR} zjnx, #{yxzt,jdbcType=VARCHAR} yxzt, #{dd,jdbcType=VARCHAR} dd, #{bz,jdbcType=VARCHAR} bz,
+        #{ylzd1,jdbcType=VARCHAR} ylzd1, #{ylzd2,jdbcType=VARCHAR} ylzd2, #{ylzd3,jdbcType=VARCHAR} ylzd3,
+        #{ylzd4,jdbcType=VARCHAR} ylzd4 from dual on duplicate key update dl1=values(dl1),dl2=values(dl2),
+        flbm=values(flbm),lb=values(lb),zcmc=values(zcmc),zcbm=values(zcbm),sl=values(sl),zzph=values(zzph),
+        sydwmc=values(sydwmc),sydwdm=values(sydwdm),zgdwmc=values(zgdwmc),zgdwdm=values(zgdwdm),
+        fzrmc=values(fzrmc),fzrdm=values(fzrdm),ggxh=values(ggxh),zbhrq=values(zbhrq),zbhrq2=values(zbhrq2),
+        ysynx=values(ysynx),zjnx=values(zjnx),yxzt=values(yxzt),dd=values(dd),bz=values(bz),
+        ylzd1=values(ylzd1),ylzd2=values(ylzd2),ylzd3=values(ylzd3),ylzd4=values(ylzd4)
+    </insert>
+    <select id="getGdzcList" resultType="com.thinkgem.jeesite.modules.app.bean.AppGdzc">
+      select * from app_gdzc
+        <include refid="com.base.baseMapper.pageEnd"/>
+    </select>
+</mapper>

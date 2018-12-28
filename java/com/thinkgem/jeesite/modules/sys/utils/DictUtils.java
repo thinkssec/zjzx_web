@@ -3,6 +3,8 @@
  */
 package com.thinkgem.jeesite.modules.sys.utils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -81,7 +83,12 @@ public class DictUtils {
 		}
 		return dictList;
 	}
-	
+
+	public static List<Map> getDwTree(String root){
+		List<Map> t=new ArrayList<>();
+		
+		return t;
+	}
 	/**
 	 * 返回字典列表（JSON）
 	 * @param type

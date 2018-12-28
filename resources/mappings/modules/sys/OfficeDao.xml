@@ -78,7 +78,13 @@
 		WHERE a.del_flag = #{DEL_FLAG_NORMAL} AND a.parent_ids LIKE #{parentIds}
 		ORDER BY a.code
 	</select>
-	
+    <select id="getByRootId" resultType="java.util.HashMap">
+		select * from sys_office where 1=1
+		<if test="rootId!=null and rootId!=''">
+			and FIND_IN_SET(id,getChildren(#{rootId}))
+		</if>
+	</select>
+
 	<insert id="insert">
 		INSERT INTO sys_office(
 			id, 

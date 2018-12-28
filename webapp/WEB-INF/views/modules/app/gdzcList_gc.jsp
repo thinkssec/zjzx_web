@@ -2,11 +2,12 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp" %>
 <html>
 <head>
-    <title>固定资产信息采集</title>
+    <title>资产信息调整</title>
     <meta name="decorator" content="default"/>
     <%@include file="/WEB-INF/views/include/treetable.jsp" %>
     <link rel="stylesheet" type="text/css" href="${ctxStatic}/easyui/themes/gray/easyui.css">
     <link rel="stylesheet" type="text/css" href="${ctxStatic}/easyui/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="${ctxStatic}/glyphicons/css/glyphicons.css">
     <link rel="stylesheet" type="text/css" href="${ctxStatic}/easyui/themes/color.css">
     <script type="text/javascript" src="${ctxStatic}/easyui/jquery.easyui.min.js"></script>
     <script type="text/javascript" src="${ctxStatic}/easyui/locale/easyui-lang-zh_CN.js"></script>
@@ -34,38 +35,89 @@
     </form>
 </div>
 <ul class="nav nav-tabs">
-    <li class="active"><a href="">固定资产信息采集</a></li>
+    <li class="active"><a href="" class="gicon-new-window">&nbsp;资产信息调整</a></li>
     <%--<shiro:hasPermission name="cbgl:rgcblist2"><li><a href="${ctx}/cbgl/rgcblist">人工成本发布2</a></li></shiro:hasPermission>--%>
 </ul>
-<form:form id="searchForm" action="${ctx}/gdzc/list" modelAttribute="condition" method="post" class="breadcrumb form-search">
+<form:form id="searchForm" action="${ctx}/gdzc/gclist" modelAttribute="condition" method="post" class="breadcrumb form-search">
     <div style="margin-top:8px;">
-        <input type="hidden" name="c2" value="${condition.c2}">
-        <input type="hidden" name="c7" value="${condition.c7}">
-        <input type="hidden" name="c5" value="${condition.c5}"><%--查询标志--%>
-        <form:select path="c1" class="input-xlarge" style="width:160px">
+        <input name="c4" value="${condition.c4}" type="text" placeholder="关键字…">
+        <form:select path="c2" class="input-xlarge" style="width:160px">
             <form:option value="" label="请选择"/>
-            <form:options items="${dwList}" htmlEscape="false"/>
+            <form:options items="${dwList}"  itemLabel="label" itemValue="value"  htmlEscape="false"/>
         </form:select>
-        <label>日期范围：&nbsp;</label><input id="beginDate" name="c3" type="text" readonly="readonly" maxlength="20"
-                                         class="input-mini Wdate"
-                                         value="${condition.c3}"
-                                         onclick="WdatePicker({dateFmt:'yyyy',isShowClear:false});"/>
-        <label>&nbsp;--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label><input id="endDate" name="c4" type="text"
-                                                                    readonly="readonly" maxlength="20"
-                                                                    class="input-mini Wdate"
-                                                                    value="${condition.c4}"
-                                                                    onclick="WdatePicker({dateFmt:'yyyy',isShowClear:false});"/>&nbsp;&nbsp;
 
-        &nbsp;&nbsp;&nbsp;<input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/>
-        <input id="btnSubmit" class="btn btn-primary" type="button" onclick="savemb();" value="保存"/>
-        <input class="btn btn-primary" type="button" onclick="document.location='${ctx}/gdzc/exportData'"  value="导出数据"/>
-        <input id="btnImport" class="btn btn-primary" type="button"  value="导入"/>
+        <a class="btn btn-primary" href="#" onclick="doCx2();"><i class="icon-play"></i> 查询</a>
+        <a class="btn btn-success" href="#" onclick="savemb();"><i class="icon-inbox"></i> 保存</a>
+        <%--<a class="btn btn-danger" href="#" onclick=""><i class="icon-warning-sign"></i> 资产报废</a>--%>
+        <a class="btn btn-info" href="#" onclick="document.location='${ctx}/gdzc/exportData_gc'"><i class="icon-download-alt"></i> 导出数据</a>
+
+            <%--<input id="btnImport" class="btn btn-primary" type="button"  value="导入"/>--%>
     </div>
 </form:form>
 <sys:message content="${message}"/>
 <table id="datatable1"></table>
-
+<div id="winimg" class="easyui-window" title="添加" style="width: 800px; height: 430px; padding: 10px;"
+           data-options="iconCls:'icon-add',modal:true,border:true,closed:true,footer:'#footer',
+        onResize:function(){
+				$(this).window('hcenter');
+		}">
+    <div id="footer" style="padding: 5px;">
+        <a class="btn btn-success" href="#" onclick="doUpdImg('${ctx}/gdzc/doImgUpd')"><i class="icon-inbox"></i> 上传</a>
+        <a class="btn btn-danger" href="#" onclick="$('#winimg').window('close');"><i class="icon-off"></i> 关闭</a>
+    </div>
+</div>
+<div id="winhis" class="easyui-window" title="查看历史记录" style="width: 800px; height: 430px; padding: 10px;"
+     data-options="iconCls:'icon-add',modal:true,border:true,closed:true,footer:'#footerh',
+        onResize:function(){
+				$(this).window('hcenter');
+		}">
+    <table id="datatable2"></table>
+    <div id="footerh" style="padding: 5px;">
+        <a class="btn btn-danger" href="#" onclick="$('#winhis').window('close');"><i class="icon-off"></i> 关闭</a>
+    </div>
+</div>
+<div id="imgUpd" class="easyui-window" title="上传" style="width: 600px; height: 400px; padding: 10px;"
+     data-options="iconCls:'icon-circle-arrow-up',modal:true,border:true,closed:true,
+        onResize:function(){
+				$(this).window('hcenter');
+		}">
+</div>
 <script type="text/javascript">
+    $(function() {
+        $(".btn").click(function(){
+            $(this).button('loading').delay(2000).queue(function() {
+                $(this).button('reset');
+                $(this).dequeue();
+            });
+        });
+    });
+    var C1='';
+    function toUpdImg(url){
+        $('#footer').show();
+        $('#winimg').window({ title: '图片信息' });
+        $('#winimg').window('open');
+
+        $('#winimg').html("<iframe id=\"imgList\" Scrolling=\"yes\" Frameborder=\"0\" Src=\"" + url + "\" Style=\"width:98%;height:97%;\"></iframe>");
+    }
+    function doUpdImg(url){
+        var ttt = $("#datatable1").datagrid("getSelections");
+        if (ttt && ttt.length > 0) {
+        } else return;
+        C1=ttt[0].ZCBM;
+        url+="?c1="+C1;
+        $('#imgUpd').window('open');
+        $('#imgUpd').html("<iframe Scrolling=\"yes\" Frameborder=\"0\" Src=\"" + url + "\" Style=\"width:98%;height:97%;\"></iframe>");
+    }
+    function toHistory(zcbm){
+        var hdivcenter=$("#winhis").height()-5;
+        $('#datatable2').height(hdivcenter + 'px');
+        dgOptions2.url = '${ctx}/gdzc/historyList?c5='+zcbm;
+        $('#datatable2').datagrid(dgOptions2);
+        $('#footerh').show();
+        $('#winhis').window({ title: '资产信息修改记录' });
+        $('#winhis').window('open');
+    }
+
     // 初始化DataGrid对象
     var editingIndex = null;
     var saveFlag = false;
@@ -75,63 +127,230 @@
     //var headerHeight = $('#dataGrid').parent().find('#searchForm').height();
     var headerHeight =200;
     //console.log(headerHeight);
+    function doCx(){
+        dgOptions.queryParams=getInitParam();
+        $('#datatable1').datagrid(dgOptions);
+    }
+    function doCx2() {
+        dgOptions.pageNumber=1;
+        dgOptions.queryParams=getInitParam();
+        $('#datatable1').datagrid(dgOptions);
+    }
     $("#btnImport").click(function(){
         $.jBox($("#importBox").html(), {title:"导入数据", buttons:{"关闭":true},
             bottomText:"导入文件不能超过5M，仅允许导入“xls”格式文件！"});
     });
+    //console.log(${dwTree });
     var dgOptions = {
         rownumbers: true,
         //fit: true,
-       // height:700,
+        // height:700,
         border: true,
         //method: 'post',
         //toolbar: '#tb',
-        pageSize: 20,
+        pageSize: 60,
         pagination: true,
         multiSort: true,
         queryParams: getInitParam(),
         singleSelect:true,
-        url: '${ctx}/gdzc/gdzcList',
+        url: '${ctx}/gdzc/gdzcList_gc',
+        frozenColumns:[[
+            {field: 'CHECKBOX', checkbox:false,hidden:true}
+            , {field: 'tu', title: '图片', width: 100,align:'center',
+                formatter:function(value,rec){
+                    var btn = '<a class="btn btn-primary" href="#" onclick="toUpdImg(\'${ctx}/gdzc/imgList?c1='+rec.ZCBM+'\');"><i class="icon-circle-arrow-up"></i> 上传</a>';
+                    return btn;
+                }
+            },
+            {field: 'his', title: '历史记录', width: 80,align:'center',
+                formatter:function(value,rec){
+                    var btn = '<a class="btn btn-info" href="#" onclick="toHistory(\''+rec.ZCBM+'\');"><i class="icon-step-backward"></i> 查看</a>';
+                    return btn;
+                }
+            }
+            , {field: 'ZCBM', title: '资产编码(系统内)', width: 100,align:'center'}
+            , {field: 'ERPBM', title: 'ERP编码', width: 100,align:'center'}
+
+            , {field: 'ZCMC', title: '资产名称', width: 170,align:'center',sortable:true}
+        ]],
         columns: [[
             {field: 'ID',  hidden: true}
-            , {field: 'ZCBM', title: '资产编码', width: 110}
-            , {field: 'DL1', title: '大类1', width: 100}
-            , {field: 'DL2', title: '大类2', width: 150,editor: "text"}
-            , {field: 'FLBM', title: '分类编码', width: 100,editor: "text"}
-            , {field: 'LB', title: '类别', width: 100,editor: "text"}
-            , {field: 'ZCMC', title: '资产名称', width: 120,editor: "text"}
-            , {field: 'SL', title: '数量', width: 80,editor: "text"}
-            , {field: 'ZZPH', title: '执照牌号', width: 100,editor: "text"}
-            , {field: 'SYDWMC', title: '使用单位', width: 100,editor: "text"}
-            , {field: 'ZGBMMC', title: '主管部门', width: 100,editor: "text"}
-            , {field: 'FZRMC', title: '负责人', width: 80,editor: "text"}
-            , {field: 'GGXH', title: '规格型号', width: 100,editor: "text"}
-            , {field: 'ZBHRQ', title: '资本化日期', width: 80,editor: "text"}
-            , {field: 'YSYNX', title: '已使用年限', width: 80,editor: "text"}
-            , {field: 'ZCYZ', title: '资产原值', width: 80,editor: "text"}
-            , {field: 'ZJNX', title: '折旧年限', width: 80,editor: "text"}
-            , {field: 'YXZT', title: '运行状态', width: 80,editor: "text"}
-            , {field: 'DD', title: '地点', width: 80,editor: "text"}
-            , {field: 'BZ', title: '备注', width: 180,editor: "text"}
-            , {field: 'YLZD1', title: '预留字段1', width: 180,editor: "text"}
-            , {field: 'YLZD2', title: '预留字段2', width: 180,editor: "text"}
-            , {field: 'YLZD3', title: '预留字段3', width: 180,editor: "text"}
-            , {field: 'YLZD4', title: '预留字段4', width: 180,editor: "text"}
+            , {field: 'DL1', title: '大类1', width: 100,align:'center',sortable:true}
+            , {field: 'DL2', title: '大类2', width: 150,align:'center',sortable:true}
+            , {field: 'LB', title: '类别', width: 100,align:'center',sortable:true}
+            , {field: 'FLBM', title: '分类编码', width: 80,align:'center'}
+            , {field: 'SL', title: '数量', width: 40,align:'center'}
+            , {field: 'ZZPH', title: '执照牌号', width: 100,align:'center'}
+            , {field: 'SYDWMC', title: '使用单位',align:'center', width: 200,formatter: function (value, row) {
+                return row.SYDWMC;
+            },editor: {
+                type: 'combotree',
+                //editable: true,
+                options: {
+                    valueField: 'id',
+                    textField: 'text',
+                    multiple:false,
+                    data: ${dwTree},
+                    panelWidth:220,
+                    panelHeight:'auto',
+                    onSelect : function(record){
+                        var edUnitId = $("#datatable1").datagrid('getEditor',{
+                            index : editingIndex,
+                            field : 'SYDWMC',
+                        });
+                        //$(edUnitId.target).combotree("setText",record.text);
+                        //为 unitTreeName赋值
+                        unitTreeName = record.text;
+                        unitTreeId = record.id;
+                    }
+
+                    ///\url:"/sys/office/treeData"
+                }
+            }}
+            , {field: 'ZGBMMC', title: '主管部门', width: 100,align:'center'}
+            , {field: 'FZRMC', title: '负责人', width: 50,align:'center',editor: "text"}
+            , {field: 'GGXH', title: '规格型号', width: 100,align:'center'}
+            , {field: 'ZBHRQ', title: '资本化日期', width: 80,align:'center'}
+            , {field: 'YSYNX', title: '已使用年限', width: 70,align:'center'}
+            , {field: 'ZCYZ', title: '资产原值', width: 60,align:'center'}
+            , {field: 'ZJNX', title: '折旧年限', width: 60,align:'center'}
+            , {field: 'YXZT', title: '运行状态', width: 100,align:'center'
+                /*,editor: {
+                    type: 'combobox',
+                    editable: "false",
+                    options: {
+                        valueField: 'value',
+                        textField: 'label',
+                        multiple:false,
+                        data: ${fns:toJson(fns:getDictList('gdzc_yxzt')) }
+                    }
+                }*/
+            }
+            , {field: 'DD', title: '地点', width: 150,editor: "text",align:'center'}
+            , {field: 'ZT', title: '清查情况', width: 80,align:'center'}
+            , {field: 'BZ', title: '备注', width: 140,editor: "text",align:'center'}
+            , {field: 'YLZD1', title: '预留字段1', width: 100,editor: "text",align:'center'}
+            , {field: 'YLZD2', title: '预留字段2', width: 100,editor: "text",align:'center'}
+            , {field: 'YLZD3', title: '预留字段3', width: 100,editor: "text",align:'center'}
+            , {field: 'YLZD4', title: '预留字段4', width: 100,editor: "text",align:'center'}
         ]],
+        rowStyler:function(index,row){
+            if (row.STATUS=='1'){
+                return 'background-color:pink;color:blue;font-weight:bold;';
+            }
+        },
         onClickRow: function (index, row) {
             if (editingIndex != null && editingIndex != index) {
                 endEditRow();
             }
         },
+        onEndEdit : function(index,row){
+            if(unitTreeName != undefined){
+                $("#datatable1").datagrid('getRows')[editingIndex]['SYDWMC'] = unitTreeName;
+                $("#datatable1").datagrid('getRows')[editingIndex]['SYDWDM'] = unitTreeId;
+                //$("#datatable1").datagrid('getRows')[editingIndex]['ZGBMMC'] = unitTreeName;
+            }
+        },
+        /*onBeginEdit:function(index, row){
+            var dw = $('#datatable1').datagrid("getEditor", {index: editingIndex, field: "SYDWMC"});
+            if (dw) {
+                var MC = $(dw.target).combobox({editable:true,
+                });
+            }
+        },*/
         onDblClickCell: function (index, field, value) {
+            var ss=$("#datatable1").datagrid('getRows')[index]['STATUS']
+            if(ss=='1') return;
             editRow(index);
         }}
+    var dgOptions2 = {
+        rownumbers: true,
+        border: true,
+        pageSize: 20,
+        pagination: true,
+        multiSort: true,
+        queryParams: getInitParam(),
+        singleSelect: true,
+        checkOnSelect: 'true',
+        url: '${ctx}/gdzc/historyList',
+        columns: [[
+            {field: 'ID', hidden: true}
+            , {field: 'NNN', title: '修改人', width: 100,align:'center'}
+            , {field: 'SBDATE', title: '修改时间', width: 100,align:'center'}
+            , {field: 'ZCBM', title: '资产编码(系统内)', width: 100,align:'center'}
+            , {field: 'ERPBM', title: 'ERP编码', width: 100,align:'center'}
+            , {field: 'ZCMC', title: '资产名称', width: 170, align: 'center'}
+            , {field: 'DL1', title: '大类1', width: 100,align:'center'}
+            , {field: 'DL2', title: '大类2', width: 150,align:'center'}
+            , {field: 'LB', title: '类别', width: 100,align:'center'}
+            , {field: 'FLBM', title: '分类编码', width: 80,align:'center'}
+
+            , {field: 'SL', title: '数量', width: 40, align: 'center'}
+            , {field: 'ZZPH', title: '执照牌号', width: 100, align: 'center'}
+            , {
+                field: 'SYDWMC', title: '使用单位', width: 100, align: 'center'
+            }
+            , {field: 'ZGBMMC', title: '主管部门', width: 100, align: 'center'}
+            , {field: 'FZRMC', title: '负责人', width: 50, align: 'center'}
+            , {field: 'GGXH', title: '规格型号', width: 100, align: 'center'}
+            , {field: 'ZBHRQ', title: '资本化日期', width: 80, align: 'center'}
+            , {field: 'YSYNX', title: '已使用年限', width: 70, align: 'center'}
+            , {field: 'ZCYZ', title: '资产原值', width: 60, align: 'center'}
+            , {field: 'ZJNX', title: '折旧年限', width: 60, align: 'center'}
+            , {field: 'YXZT', title: '运行状态', width: 60, align: 'center'}
+            , {field: 'DD', title: '地点', width: 80, align: 'center'}
+            , {field: 'ZT', title: '清查情况', width: 80,align:'center'}
+            , {field: 'BZ', title: '备注', width: 180, align: 'center'}
+            , {field: 'YLZD1', title: '预留字段1', width: 100, align: 'center'}
+            , {field: 'YLZD2', title: '预留字段2', width: 100, align: 'center'}
+            , {field: 'YLZD3', title: '预留字段3', width: 100, align: 'center'}
+            , {field: 'YLZD4', title: '预留字段4', width: 100, align: 'center'}
+        ]]
+    };
     $(function () {
         //handleAuthDataRule();
         $('#datatable1').height(($(window).height() - 120) + 'px');
         $('#datatable1').datagrid(dgOptions);
     });
-
+    (function(){
+        $.fn.combotree.defaults.editable = true;
+        $.extend($.fn.combotree.defaults.keyHandler,{
+            up:function(){
+                console.log('up');
+            },
+            down:function(){
+                console.log('down');
+            },
+            enter:function(){
+                console.log('enter');
+            },
+            query:function(q){
+                var t = $(this).combotree('tree');
+                var nodes = t.tree('getChildren');
+                for(var i=0; i<nodes.length; i++){
+                    var node = nodes[i];
+                    if (node.text.indexOf(q) >= 0){
+                        $(node.target).show();
+                    } else {
+                        $(node.target).hide();
+                    }
+                }
+                var opts = $(this).combotree('options');
+                if (!opts.hasSetEvents){
+                    opts.hasSetEvents = true;
+                    var onShowPanel = opts.onShowPanel;
+                    opts.onShowPanel = function(){
+                        var nodes = t.tree('getChildren');
+                        for(var i=0; i<nodes.length; i++){
+                            $(nodes[i].target).show();
+                        }
+                        onShowPanel.call(this);
+                    };
+                    $(this).combo('options').onShowPanel = opts.onShowPanel;
+                }
+            }
+        });
+    })(jQuery);
 
 
 
@@ -142,9 +361,20 @@
             editingIndex = index;
         }
     }
+    var unitTreeName = undefined;
+    var unitTreeId = undefined;
     function endEditRow() {
         if (editingIndex != null) {
             if ($('#datatable1').datagrid('validateRow', editingIndex)) {
+                //console.log('-----------${fns:toJson(fns:getDictList('gdzc_dw')) }');
+                /*var dw = $('#datatable1').datagrid("getEditor", {index: editingIndex, field: "SYDWMC"});
+                 if (dw) {
+
+                 var MC = $(dw.target).combotree('getText');
+                 var ID = $(dw.target).combotree("getValue");
+                 console.log(MC);
+                 $('#datatable1').datagrid("getRows")[editingIndex]["SYDWMC"] = MC;
+                 }*/
                 $("#datatable1").datagrid("endEdit", editingIndex);
                 editingIndex = null;
             }
@@ -168,7 +398,7 @@
             return;
         }
         var updateStr = JSON.stringify($("#datatable1").datagrid("getChanges", "updated"));
-        console.log(updateStr);
+        //console.log(updateStr);
         if ( updateStr == "[]" ) {
             $.messager.show({
                 title: '操作提示',
@@ -179,7 +409,7 @@
         }
         saveFlag = true;
         $.ajax({
-            url: "${ctx}/gdzc/saveGdzc",
+            url: "${ctx}/gdzc/saveGdzcgc",
             type: "post",
             data: {C6:updateStr},
             success: function (result) {
@@ -201,6 +431,7 @@
                     //$.messager.alert("操作提示", "保存失败！");
                     saveFlag = false;
                 }
+                doCx();
             }
         });
     }

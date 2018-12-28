@@ -3,7 +3,9 @@
  */
 package com.thinkgem.jeesite.modules.sys.utils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.UnavailableSecurityManagerException;
@@ -209,6 +211,11 @@ public class UserUtils {
 		return officeList;
 	}
 
+	public static HashMap<String,HashMap> getOfficeList(String rootId){
+		@SuppressWarnings("unchecked")
+		HashMap<String,HashMap> officeList = officeDao.getByRootId(rootId);
+		return officeList;
+	}
 	/**
 	 * 获取当前用户有权限访问的部门
 	 * @return

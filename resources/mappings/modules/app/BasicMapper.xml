@@ -4,14 +4,10 @@
 
 <mapper namespace="com.base.baseMapper">
     <sql id="pageStart">SELECT * FROM (SELECT A.*, rownum r FROM (</sql>
-    <sql id="pageEnd">) A
-      WHERE 1=1
+    <sql id="pageEnd">
+
         <if test="start != null">
-            and rownum <![CDATA[ <= ]]> ${start} * ${limit}
-        </if>
-        ) B WHERE 1=1
-        <if test="start != null">
-            and r <![CDATA[ > ]]> (${start}-1)*${limit}
+            limit ${from},${to}
         </if>
     </sql>
 </mapper>

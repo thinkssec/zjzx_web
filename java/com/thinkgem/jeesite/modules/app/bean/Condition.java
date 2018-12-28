@@ -50,7 +50,25 @@ public class Condition extends BaseEntity<Condition> {
     public String getStart() {
         return start;
     }
-
+    public String getFrom(){
+        String m="";
+        try{
+            m=(Integer.parseInt(getStart())-1)*Integer.parseInt(getLimit())+"";
+        }catch(Exception e){
+            return "0";
+        }
+        return m;
+    }
+    public String getTo(){
+        String m="";
+        try{
+            //m=(Integer.parseInt(getStart())*Integer.parseInt(getLimit()))+"";
+            m=getLimit()+"";
+        }catch(Exception e){
+            return "0";
+        }
+        return m;
+    }
     public void setStart(String start) {
         this.start = start;
     }

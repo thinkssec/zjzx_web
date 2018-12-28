@@ -3,10 +3,7 @@
  */
 package com.thinkgem.jeesite.common.utils.excel;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -19,18 +16,13 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +44,7 @@ public class ExportExcel {
 	/**
 	 * 工作薄对象
 	 */
-	private SXSSFWorkbook wb;
+	private HSSFWorkbook wb;
 	
 	/**
 	 * 工作表对象
@@ -186,11 +178,25 @@ public class ExportExcel {
 	 * @param headerList 表头列表
 	 */
 	private void initialize(String title, List<String> headerList) {
-		this.wb = new SXSSFWorkbook(500);
-		this.sheet = wb.createSheet("Export");
-		this.styles = createStyles(wb);
+		InputStream fs=this.getClass().getClassLoader().getResourceAsStream("act/固定资产信息导入模板.xls");
+		//XSSFWorkbook xwb=null;
+
+		try {
+			this.wb =(HSSFWorkbook) WorkbookFactory.create(fs);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		//this.wb = new SXSSFWorkbook(xwb,1000);
+		//this.sheet = wb.createSheet("Export");
+		this.sheet=wb.getSheetAt(0);
+		this.styles = new HashMap<String,CellStyle>();
+		//this.sheet.getRow(0).getCell(24).getCellStyle();
+		/*styles = new HashMap<String, CellStyle>();
+		styles.put("locked",this.sheet.getRow(0).getCell(24).getCellStyle());
+		System.out.println("0000  "+this.sheet.getRow(0).getCell(23).getStringCellValue());*/
+		rownum++;
 		// Create title
-		if (StringUtils.isNotBlank(title)){
+		/*if (StringUtils.isNotBlank(title)){
 			Row titleRow = sheet.createRow(rownum++);
 			titleRow.setHeightInPoints(30);
 			Cell titleCell = titleRow.createCell(0);
@@ -223,7 +229,8 @@ public class ExportExcel {
 		for (int i = 0; i < headerList.size(); i++) {  
 			int colWidth = sheet.getColumnWidth(i)*2;
 	        sheet.setColumnWidth(i, colWidth < 3000 ? 3000 : colWidth);  
-		}
+		}*/
+
 		log.debug("Initialize success.");
 	}
 	
@@ -363,12 +370,69 @@ public class ExportExcel {
 				cell.setCellStyle(style);
 			}
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			log.info("Set cell value ["+row.getRowNum()+","+column+"] error: " + ex.toString());
 			cell.setCellValue(val.toString());
 		}
 		return cell;
 	}
-
+	public Cell addCell(Row row, int column, Object val, int align,int protect, Class<?> fieldType){
+		Cell cell = row.createCell(column);
+		String cellFormatString = "@";
+		//System.out.println("---------------"+val);
+		try {
+			if(val == null){
+				cell.setCellValue("");
+			}else if(fieldType != Class.class){
+				cell.setCellValue((String)fieldType.getMethod("setValue", Object.class).invoke(null, val));
+			}else{
+				if(val instanceof String) {
+					cell.setCellValue((String) val);
+				}else if(val instanceof Integer) {
+					cell.setCellValue((Integer) val);
+					cellFormatString = "0";
+				}else if(val instanceof Long) {
+					cell.setCellValue((Long) val);
+					cellFormatString = "0";
+				}else if(val instanceof Double) {
+					cell.setCellValue((Double) val);
+					cellFormatString = "0.00";
+				}else if(val instanceof Float) {
+					cell.setCellValue((Float) val);
+					cellFormatString = "0.00";
+				}else if(val instanceof Date) {
+					cell.setCellValue((Date) val);
+					cellFormatString = "yyyy-MM-dd HH:mm";
+				}else {
+					cell.setCellValue((String)Class.forName(this.getClass().getName().replaceAll(this.getClass().getSimpleName(),
+							"fieldtype."+val.getClass().getSimpleName()+"Type")).getMethod("setValue", Object.class).invoke(null, val));
+				}
+			}
+			if (val != null){
+				CellStyle style = styles.get("data_column_"+column);
+				if (style == null){
+					style = wb.createCellStyle();
+					//style.cloneStyleFrom(styles.get("data"+(align>=1&&align<=3?align:"")));
+					style.setDataFormat(wb.createDataFormat().getFormat(cellFormatString));
+					/*if(protect==1)
+						style.setLocked(true);*/
+					styles.put("data_column_" + column, style);
+				}
+				/*if(protect==1){
+					CellStyle s = wb.createCellStyle();
+					s.cloneStyleFrom(styles.get("locked"));
+					s.setLocked(true);
+					cell.setCellStyle(s);
+				}*/
+				//cell.setCellStyle(style);
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			log.info("Set cell value ["+row.getRowNum()+","+column+"] error: " + ex.toString());
+			cell.setCellValue(val.toString());
+		}
+		return cell;
+	}
 	/**
 	 * 添加数据（通过annotation.ExportField添加数据）
 	 * @return list 数据列表
@@ -398,14 +462,16 @@ public class ExportExcel {
 					}
 				}catch(Exception ex) {
 					// Failure to ignore
+					//ex.printStackTrace();
 					log.info(ex.toString());
 					val = "";
 				}
-				this.addCell(row, colunm++, val, ef.align(), ef.fieldType());
+				this.addCell(row, colunm++, val, ef.align(),ef.protect(), ef.fieldType());
 				sb.append(val + ", ");
 			}
 			log.debug("Write success: ["+row.getRowNum()+"] "+sb.toString());
 		}
+		//sheet.protectSheet("123");
 		return this;
 	}
 	
@@ -432,7 +498,7 @@ public class ExportExcel {
 	
 	/**
 	 * 输出到文件
-	 * @param fileName 输出文件名
+	 *
 	 */
 	public ExportExcel writeFile(String name) throws FileNotFoundException, IOException{
 		FileOutputStream os = new FileOutputStream(name);
@@ -444,7 +510,7 @@ public class ExportExcel {
 	 * 清理临时文件
 	 */
 	public ExportExcel dispose(){
-		wb.dispose();
+		//wb.dispose();
 		return this;
 	}
 	

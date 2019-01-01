@@ -339,6 +339,38 @@
         </foreach>
         commit work;
     </update>
+    <update id="cfsave">
+        start TRANSACTION ;
+        set @id:=#{c1};
+        <if test="c1==''||c1==null">
+            set @id:=concat(#{c8},'_',nextval('seq_cfbm'));
+        </if>
+        REPLACE INTO app_gdzc_cf (id,pzcbm,sydwdm,fzr,zcyz,dd,bz,submitter,mc,perpbm,pflbm)
+        VALUES (@id,#{c8},#{c3},#{c5},#{c4},#{c6},#{c7},#{c9},#{c2},#{c10},#{c11});
+        commit work;
+    </update>
+    <update id="saveWxd">
+        start TRANSACTION ;
+        <foreach collection="list" item="record" index="index">
+            set @wxdh:=#{record.WXDH};
+            <if test="record.WXDH==''||record.WXDH==null">
+                set @wxdh:=concat('WXD',nextval('seq_wxdh'));
+            </if>
+            REPLACE INTO app_gdzc_wx (wxdh,bxr,fy,wxnr,bz,submitter,status,ny,deptid)
+            VALUES (@wxdh,#{record.BXR},#{record.FY},#{record.WXNR},#{record.BZ},#{submitter},'-1',#{record.NY},#{deptid});
+        </foreach>
+        commit work;
+    </update>
+    <update id="saveWxmx">
+        start TRANSACTION ;
+        <foreach collection="list" item="record" index="index">
+            insert INTO app_gdzc_wxmx (id,wxdh,zcbm,flbm,erpbm,zcyz,fzr,zcmc,lb,bz)
+            VALUES (uuid(),#{wxdh},#{record.ZCBM},#{record.FLBM},#{record.ERPBM},#{record.ZCYZ},#{record.FZRMC},#{record.ZCMC}
+            ,#{record.LB},#{record.BZ}
+            );
+        </foreach>
+        commit work;
+    </update>
     <delete id="delZcdb">
         start TRANSACTION ;
         <foreach collection="list" item="record" index="index">
@@ -352,6 +384,21 @@
     </delete>
     <delete id="delGdzcImg">
         update app_gdzc_img set isdel='1',DELR=#{DELR},DELT=SYSDATE() where ID=#{ID}
+    </delete>
+    <delete id="cfdel">
+        delete from app_gdzc_cf where id=#{c1}
+    </delete>
+    <delete id="deleteWx">
+        start TRANSACTION ;
+        delete from app_gdzc_wx where wxdh=#{c6};
+        delete from app_gdzc_wxmx where wxdh=#{c6};
+        commit work;
+    </delete>
+    <delete id="wxmxdel">
+        delete from app_gdzc_wxmx where id=#{c1}
+    </delete>
+    <delete id="tjWxd">
+        update app_gdzc_wx set status=0 where ny=#{c1} and deptid=#{c9}
     </delete>
     <select id="getGdzcList" resultType="com.thinkgem.jeesite.modules.app.bean.AppGdzc">
         <![CDATA[
@@ -459,5 +506,145 @@
         <![CDATA[
         select * from app_gdzc_img where zcbm=#{c1} and (isdel <>'1' or isdel is null) order by submitdate desc
         ]]>
+    </select>
+    <select id="getSubList" resultType="java.util.HashMap">
+        select a.*,c.name TJR,b.name SYDWMC from app_gdzc_cf a,sys_office b,sys_user c where
+        a.sydwdm=b.id and a.submitter=c.id and pzcbm=#{c1} order by submitdate desc
+    </select>
+    <select id="getWxmx" resultType="java.util.HashMap">
+        select * from app_gdzc_wx where ny=#{c1} and deptid=#{c2}
+    </select>
+    <select id="getGdzcListCf" resultType="java.util.HashMap">
+        <![CDATA[
+        SELECT
+                *
+            FROM
+                (
+                    SELECT
+                        c.*,'0' FLG
+                    FROM
+                        v_gdzc c
+                    WHERE
+                        (isdel <> '1' OR isdel IS NULL)
+                    UNION
+                        SELECT
+                            a.ID,
+                            a.DL1,
+                            a.DL2,
+                            a.FLBM,
+                            a.LB,
+                            a.ZCMC,
+                            a.ERPBM,
+                            b.ID ZCBM,
+                            a.SL,
+                            a.ZZPH,
+                            a.SYDWMC,
+                            b.SYDWDM,
+                            a.ZGDWMC,
+                            a.ZGDWDM,
+                            b.FZR FZRMC,
+                            a.FZRDM,
+                            a.GGXH,
+                            a.ZBHRQ,
+                            a.ZBHRQ2,
+                            a.YSYNX,
+                            b.ZCYZ,
+                            a.ZJNX,
+                            a.YXZT,
+                            b.DD,
+                            b.BZ,
+                            a.YLZD1,
+                            a.YLZD2,
+                            a.YLZD3,
+                            a.YLZD4,
+                            a.SUBMITTER,
+                            a.DEPTID,
+                            a.SUBMITDATE,
+                            a.ISDEL,
+                            a. STATUS,
+                            a.ZT,
+                            a.OVER,'1' FLG
+                        FROM
+                            v_gdzc a,
+                            app_gdzc_cf b
+                        WHERE
+                            a.zcbm = b.pzcbm
+                ) d
+        where (isdel <>'1' or isdel is null)
+        ]]>
+        <if test="c2!=null and c2!=''">
+            and sydwdm in (select id from sys_office where id=#{c2} or parent_id =#{c2})
+        </if>
+        <if test="c4!=null and c4!=''">
+            and (zcmc like CONCAT('%',#{c4},'%') or dl1 like CONCAT('%',#{c4},'%') or dl2 like CONCAT('%',#{c4},'%')
+            or lb like CONCAT('%',#{c4},'%') or zzph like CONCAT('%',#{c4},'%') or ggxh like CONCAT('%',#{c4},'%'))
+        </if>
+        order by
+        <if test="sort!=null and sort!=''">
+            ${sort},
+        </if>
+        status desc,submitdate desc
+        <include refid="com.base.baseMapper.pageEnd"/>
+    </select>
+    <select id="getWxmxList" resultType="java.util.HashMap">
+        select * from app_gdzc_wxmx where wxdh=#{c1}
+    </select>
+    <select id="getWxdshList" resultType="java.util.HashMap">
+        SELECT
+                a.id,
+                a. NAME,
+                b.db,
+                b.yb,
+                b.dfy,
+                b.yfy
+            FROM
+                sys_office a
+            LEFT JOIN (
+                SELECT
+                    deptid,
+                    sum(
+                        CASE
+                        WHEN STATUS = '0' THEN
+                            1
+                        ELSE
+                            0
+                        END
+                    ) db,
+                    sum(
+                        CASE
+                        WHEN STATUS = '1' THEN
+                            1
+                        ELSE
+                            0
+                        END
+                    ) yb,
+                    sum(
+                        CASE
+                        WHEN STATUS = '0' THEN
+                            fy
+                        ELSE
+                            0
+                        END
+                    ) dfy,
+                    sum(
+                        CASE
+                        WHEN STATUS = '1' THEN
+                            fy
+                        ELSE
+                            0
+                        END
+                    ) yfy
+                FROM
+                    app_gdzc_wx
+                WHERE
+                    ny = #{c1}
+                AND (STATUS = '0' OR STATUS = '1')
+                GROUP BY
+                    deptid,
+                    ny
+            ) b ON a.id = b.deptid
+            WHERE
+                grade = 1
+            OR grade = 2
     </select>
 </mapper>

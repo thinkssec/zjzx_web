@@ -19,6 +19,7 @@ public interface GdzcMapper {
     public List<AppGdzc> getGdzcList(Condition c);
     public List<AppGdzc> getGdzcList2(Condition c);
     public List<HashMap> getGdzcListM(Condition c);
+    public List<HashMap> getSubList(Condition c);
     public List<HashMap> getOfficeAll(@Param("ROOTID") String rootId);
     @MapKey("ky")
     public HashMap<String,HashMap> getGdzcSumZcyz(@Param("ROOTID") String rootId);
@@ -39,4 +40,26 @@ public interface GdzcMapper {
     List<HashMap> getGdzcImg(String c1);
 
     void delGdzcImg(Map m);
+
+    void cfsave(Condition condition);
+
+    void cfdel(Condition condition);
+
+    List<HashMap> getWxmx(Condition condition);
+
+    List<HashMap> getWxmxList(Condition condition);
+
+    List<HashMap> getGdzcListCf(Condition condition);
+
+    void saveWxd(HashMap m);
+
+    void saveWxmx(HashMap m);
+
+    void deleteWx(Condition condition);
+
+    void wxmxdel(Condition condition);
+
+    void tjWxd(Condition condition);
+
+    List<HashMap> getWxdshList(Condition condition);
 }

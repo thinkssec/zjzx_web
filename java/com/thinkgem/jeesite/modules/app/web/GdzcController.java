@@ -2,11 +2,13 @@ package com.thinkgem.jeesite.modules.app.web;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.google.common.collect.Lists;
+import com.slofzx.jbdf.base.util.DateUtil;
 import com.slofzx.jbdf.base.util.StringUtil;
 import com.thinkgem.jeesite.common.beanvalidator.BeanValidators;
 import com.thinkgem.jeesite.common.mapper.JsonMapper;
 import com.thinkgem.jeesite.common.service.FileService;
 import com.thinkgem.jeesite.common.utils.DateUtils;
+import com.thinkgem.jeesite.common.utils.StringUtils;
 import com.thinkgem.jeesite.common.utils.excel.ExportExcel;
 import com.thinkgem.jeesite.common.utils.excel.ExportExcel_gc;
 import com.thinkgem.jeesite.common.utils.excel.ImportExcel;
@@ -28,10 +30,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Created by Administrator on 2017/6/19.
@@ -42,7 +42,8 @@ public class GdzcController extends BaseController {
     @Autowired
     private GdzcMapper gdzcMapper;
 
-    FileService fileService=new FileService();
+    FileService fileService = new FileService();
+
     @RequestMapping(value = "list")
     public String list(Condition condition, Model model) {
         String company = UserUtils.getUser().getCompany().getId();
@@ -196,10 +197,9 @@ public class GdzcController extends BaseController {
             for (int i = 0; i < s.length; i++) {
                 m += "," + s[i] + " " + o[i];
             }
-            try{
+            try {
                 condition.setSort(m.substring(1));
-            }
-            catch (Exception e){
+            } catch (Exception e) {
 
             }
         }
@@ -215,10 +215,12 @@ public class GdzcController extends BaseController {
         }
         return jdata;
     }
+
     @RequestMapping(value = "index")
     public String index(Condition condition, Model model) {
         return "modules/app/index";
     }
+
     @RequestMapping(value = "indexT")
     public String indexT(Condition condition, Model model) {
         return "modules/app/indexT";
@@ -228,19 +230,19 @@ public class GdzcController extends BaseController {
     @ResponseBody
     public String gdzcTreeMapList(Condition condition, Model model, String sort, String order) {
         List<HashMap> dic = gdzcMapper.getOfficeAll("0");
-        HashMap<String,HashMap> gdzcTList=gdzcMapper.getGdzcSumZcyz("0");
-        HashMap<String,HashMap> rtn=new HashMap();
-        for(HashMap value :dic){
-            String key=(String)value.get("id");
-            HashMap rv=gdzcTList.get(value.get("pname"));
-            if(rv==null){
+        HashMap<String, HashMap> gdzcTList = gdzcMapper.getGdzcSumZcyz("0");
+        HashMap<String, HashMap> rtn = new HashMap();
+        for (HashMap value : dic) {
+            String key = (String) value.get("id");
+            HashMap rv = gdzcTList.get(value.get("pname"));
+            if (rv == null) {
                 continue;
             }
-            if(gdzcTList.get(value.get("name"))!=null) {
-                List<HashMap> c=(List)rv.get("children");
-                if(c==null) {
-                    c=new ArrayList<HashMap>();
-                    rv.put("children",c);
+            if (gdzcTList.get(value.get("name")) != null) {
+                List<HashMap> c = (List) rv.get("children");
+                if (c == null) {
+                    c = new ArrayList<HashMap>();
+                    rv.put("children", c);
                 }
                 c.add(gdzcTList.get(value.get("name")));
             }
@@ -248,24 +250,25 @@ public class GdzcController extends BaseController {
         String jdata = JsonMapper.getInstance().toJson(gdzcTList.get("川气东送管道分公司").get("children"));
         return jdata;
     }
+
     @RequestMapping(value = "gdzcTreeMapListT")
     @ResponseBody
     public String gdzcTreeMapListT(Condition condition, Model model, String sort, String order) {
         List<HashMap> dic = gdzcMapper.getOfficeAll("0");
-        HashMap<String,HashMap> gdzcTList=gdzcMapper.getGdzcSumZcyz("0");
-        HashMap<String,HashMap> rtn=new HashMap();
-        for(HashMap value :dic){
-            String key=(String)value.get("id");
-            HashMap rv=gdzcTList.get(value.get("pname"));
-            if(rv==null){
+        HashMap<String, HashMap> gdzcTList = gdzcMapper.getGdzcSumZcyz("0");
+        HashMap<String, HashMap> rtn = new HashMap();
+        for (HashMap value : dic) {
+            String key = (String) value.get("id");
+            HashMap rv = gdzcTList.get(value.get("pname"));
+            if (rv == null) {
                 continue;
             }
             //rv.remove("value");
-            if(gdzcTList.get(value.get("name"))!=null) {
-                List<HashMap> c=(List)rv.get("children");
-                if(c==null) {
-                    c=new ArrayList<HashMap>();
-                    rv.put("children",c);
+            if (gdzcTList.get(value.get("name")) != null) {
+                List<HashMap> c = (List) rv.get("children");
+                if (c == null) {
+                    c = new ArrayList<HashMap>();
+                    rv.put("children", c);
                 }
                 c.add(gdzcTList.get(value.get("name")));
             }
@@ -284,10 +287,9 @@ public class GdzcController extends BaseController {
             for (int i = 0; i < s.length; i++) {
                 m += "," + s[i] + " " + o[i];
             }
-            try{
+            try {
                 condition.setSort(m.substring(1));
-            }
-            catch (Exception e){
+            } catch (Exception e) {
 
             }
         }
@@ -311,10 +313,9 @@ public class GdzcController extends BaseController {
             for (int i = 0; i < s.length; i++) {
                 m += "," + s[i] + " " + o[i];
             }
-            try{
+            try {
                 condition.setSort(m.substring(1));
-            }
-            catch (Exception e){
+            } catch (Exception e) {
 
             }
         }
@@ -351,10 +352,9 @@ public class GdzcController extends BaseController {
             for (int i = 0; i < s.length; i++) {
                 m += "," + s[i] + " " + o[i];
             }
-            try{
+            try {
                 condition.setSort(m.substring(1));
-            }
-            catch (Exception e){
+            } catch (Exception e) {
 
             }
         }
@@ -389,10 +389,9 @@ public class GdzcController extends BaseController {
             for (int i = 0; i < s.length; i++) {
                 m += "," + s[i] + " " + o[i];
             }
-            try{
+            try {
                 condition.setSort(m.substring(1));
-            }
-            catch (Exception e){
+            } catch (Exception e) {
 
             }
         }
@@ -430,10 +429,9 @@ public class GdzcController extends BaseController {
             for (int i = 0; i < s.length; i++) {
                 m += "," + s[i] + " " + o[i];
             }
-            try{
+            try {
                 condition.setSort(m.substring(1));
-            }
-            catch (Exception e){
+            } catch (Exception e) {
 
             }
         }
@@ -526,7 +524,7 @@ public class GdzcController extends BaseController {
             ImportExcel ei = new ImportExcel(file, 0, 0);
             List<AppGdzc> list = ei.getDataList(AppGdzc.class);
             User user = UserUtils.getUser();
-            Map m=new HashMap();
+            Map m = new HashMap();
             m.put("list", list);
             m.put("deptid", user.getOffice().getId());
             m.put("submitter", user.getId());
@@ -774,35 +772,268 @@ public class GdzcController extends BaseController {
 
     @RequestMapping("imgUpd")
     @ResponseBody
-    public String imgUpd(MultipartFile file,RedirectAttributes redirectAttributes, Condition condition) {
-        String[] filepath=fileService.upLoad(file);
+    public String imgUpd(MultipartFile file, RedirectAttributes redirectAttributes, Condition condition) {
+        String[] filepath = fileService.upLoad(file);
         User u = UserUtils.getUser();
-        Map m=new HashMap();
-        m.put("ZCBM",condition.getC1());
-        m.put("PATH",filepath[0]);
-        m.put("SUBMITTER",u.getId());
-        m.put("FJMC",filepath[1]);
+        Map m = new HashMap();
+        m.put("ZCBM", condition.getC1());
+        m.put("PATH", filepath[0]);
+        m.put("SUBMITTER", u.getId());
+        m.put("FJMC", filepath[1]);
         gdzcMapper.insertImg(m);
         return "1";
     }
+
     @RequestMapping("imgList")
-    public String imgList( Condition condition,Model model) {
-        List<HashMap> mdList=new ArrayList();
-        mdList=gdzcMapper.getGdzcImg(condition.getC1());
-        model.addAttribute("mdList",mdList);
+    public String imgList(Condition condition, Model model) {
+        List<HashMap> mdList = new ArrayList();
+        mdList = gdzcMapper.getGdzcImg(condition.getC1());
+        model.addAttribute("mdList", mdList);
         return "modules/app/gdzcImgList";
     }
+
     @RequestMapping("delImg")
-    public String delImg( Condition condition,Model model) {
-        Map m=new HashMap();
+    public String delImg(Condition condition, Model model) {
+        Map m = new HashMap();
         User u = UserUtils.getUser();
-        m.put("ID",condition.getC2());
-        m.put("DELR",u.getId());
+        m.put("ID", condition.getC2());
+        m.put("DELR", u.getId());
         gdzcMapper.delGdzcImg(m);
-        return "redirect:"+adminPath+"/gdzc/imgList?c1="+condition.getC1();
+        return "redirect:" + adminPath + "/gdzc/imgList?c1=" + condition.getC1();
     }
+
     @RequestMapping("doImgUpd")
-    public String doImgUpd( Condition condition, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+    public String doImgUpd(Condition condition, HttpServletResponse response, RedirectAttributes redirectAttributes) {
         return "modules/app/gdzcImgUpd";
+    }
+
+    @RequestMapping(value = "cflist")
+    public String cflist(Condition condition, Model model) {
+        String company = UserUtils.getUser().getCompany().getId();
+        HashMap<String, HashMap> dept = UserUtils.getOfficeList("");
+        HashMap<String, List> children = new HashMap();
+        for (String key : dept.keySet()) {
+            List c = children.get(dept.get(key).get("parent_id"));
+            if (c == null) {
+                c = new ArrayList();
+                children.put((String) dept.get(key).get("parent_id"), c);
+            }
+            c.add(dept.get(key));
+        }
+        //System.out.println(toTree(dept,children,company));
+        List t = new ArrayList();
+        t.add(toTree(dept, children, company));
+        model.addAttribute("dwTree", JsonMapper.getInstance().toJson(t));
+        return "modules/app/cfList";
+    }
+
+    @RequestMapping(value = "subList")
+    @ResponseBody
+    public String subList(Condition condition, Model model, String sort, String order) {
+
+        List<HashMap> lsHt = gdzcMapper.getSubList(condition);
+        HashMap r = new HashMap();
+        r.put("rows", lsHt);
+        String jdata = JsonMapper.getInstance().toJson(r);
+        return jdata;
+    }
+
+    @RequestMapping(value = "cfsave")
+    @ResponseBody
+    public String cfsave(Condition condition, Model model) {
+        try {
+            User u = UserUtils.getUser();
+            condition.setC9(u.getId());
+            //if(StringUtils.isBlank(condition.getC1())) condition.setC1(UUID.randomUUID().toString());
+            gdzcMapper.cfsave(condition);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "0";
+        }
+        return "1";
+    }
+
+    @RequestMapping(value = "cfdel")
+    @ResponseBody
+    public String cfdel(Condition condition, Model model) {
+        try {
+            gdzcMapper.cfdel(condition);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "0";
+        }
+        return "1";
+    }
+
+    @RequestMapping(value = "wxmxdel")
+    @ResponseBody
+    public String wxmxdel(Condition condition, Model model) {
+        try {
+            gdzcMapper.wxmxdel(condition);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "0";
+        }
+        return "1";
+    }
+
+    @RequestMapping(value = "wxlist")
+    public String wxlist(Condition condition, Model model) {
+        HashMap<String, HashMap> dept = UserUtils.getOfficeList("");
+        HashMap<String, List> children = new HashMap();
+        List<Dict> dw = Lists.newArrayList();
+        for (String key : dept.keySet()) {
+            List c = children.get(dept.get(key).get("parent_id"));
+
+            if (c == null) {
+                c = new ArrayList();
+                children.put((String) dept.get(key).get("parent_id"), c);
+            }
+            c.add(dept.get(key));
+        }
+        List ccc = children.get(UserUtils.getUser().getOffice().getId());
+        if (ccc != null)
+            for (Object m : ccc) {
+                Dict d = new Dict();
+                d.setLabel((String) ((Map) m).get("name"));
+                d.setValue((String) ((Map) m).get("id"));
+                dw.add(d);
+            }
+
+        List<Dict> nyList = Lists.newArrayList();
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+        c.add(Calendar.MONTH, 1);
+        for (int i = 0; i < 13; i++) {
+            c.add(Calendar.MONTH, -1);
+            String ny = sdf.format(c.getTime());
+            Dict d = new Dict();
+            d.setLabel(ny);
+            d.setValue(ny);
+            nyList.add(d);
+        }
+        model.addAttribute("ny", nyList);
+        model.addAttribute("dwList",dw);
+        return "modules/app/wxList";
+    }
+
+    @RequestMapping(value = "wxdList")
+    @ResponseBody
+    public String wxdList(Condition condition, Model model, String sort, String order) {
+
+        User u = UserUtils.getUser();
+        condition.setC2(u.getOffice().getId());
+        List<HashMap> lsHt = gdzcMapper.getWxmx(condition);
+        HashMap r = new HashMap();
+        r.put("rows", lsHt);
+        String jdata = JsonMapper.getInstance().toJson(r);
+        return jdata;
+    }
+    @RequestMapping(value = "wxmxList")
+    @ResponseBody
+    public String wxmxList(Condition condition, Model model, String sort, String order) {
+
+        List<HashMap> lsHt = gdzcMapper.getWxmxList(condition);
+        HashMap r = new HashMap();
+        r.put("rows", lsHt);
+        String jdata = JsonMapper.getInstance().toJson(r);
+        return jdata;
+    }
+
+    @RequestMapping(value = "selectZc")
+    @ResponseBody
+    public String selectZc(Condition condition, Model model, String sort, String order){
+        if (!StringUtil.isEmpty(sort)) {
+            String[] s = sort.split(",");
+            String[] o = order.split(",");
+            String m = "";
+            for (int i = 0; i < s.length; i++) {
+                m += "," + s[i] + " " + o[i];
+            }
+            try {
+                condition.setSort(m.substring(1));
+            } catch (Exception e) {
+
+            }
+        }
+        if (StringUtil.isEmpty(condition.getC2()))
+            condition.setC2(UserUtils.getUser().getOffice().getId());
+        List<HashMap> lsHt = gdzcMapper.getGdzcListCf(condition);
+        HashMap r = new HashMap();
+        condition.setStart(null);
+        r.put("total", gdzcMapper.getGdzcListCf(condition).size());
+        r.put("rows", lsHt);
+        String jdata = JsonMapper.getInstance().toJson(r);
+        return jdata;
+    }
+
+    @RequestMapping(value = "saveWxd")
+    @ResponseBody
+    public String saveWxd(Condition condition, Model model, String sort, String order){
+        String updL = StringEscapeUtils.unescapeHtml(condition.getC6());
+        JavaType javaType = JsonMapper.getInstance().getTypeFactory().constructParametricType(List.class, HashMap.class);
+        List<HashMap> h = JsonMapper.getInstance().fromJson(updL, javaType);
+        HashMap m = new HashMap();
+        m.put("list", h);
+        m.put("submitter",UserUtils.getUser().getId());
+        m.put("deptid",UserUtils.getUser().getOffice().getId());
+        gdzcMapper.saveWxd(m);
+        return "1";
+    }
+    @RequestMapping(value = "deleteWxd")
+    @ResponseBody
+    public String deleteWxd(Condition condition, Model model, String sort, String order){
+        gdzcMapper.deleteWx(condition);
+        return "1";
+    }
+    @RequestMapping(value = "saveWxmx")
+    @ResponseBody
+    public String saveWxmx(Condition condition, Model model, String sort, String order){
+        String updL = StringEscapeUtils.unescapeHtml(condition.getC6());
+        JavaType javaType = JsonMapper.getInstance().getTypeFactory().constructParametricType(List.class, HashMap.class);
+        List<HashMap> h = JsonMapper.getInstance().fromJson(updL, javaType);
+        HashMap m = new HashMap();
+        m.put("list", h);
+        m.put("wxdh",condition.getC7());
+        gdzcMapper.saveWxmx(m);
+        return "1";
+    }
+    @RequestMapping(value = "tjWxd")
+    @ResponseBody
+    public String tjWxd(Condition condition, Model model, String sort, String order){
+        condition.setC9(UserUtils.getUser().getOffice().getId());
+        gdzcMapper.tjWxd(condition);
+        return "1";
+    }
+
+    @RequestMapping(value = "wxdshlist")
+    @ResponseBody
+    public String wxdshlist(Condition condition, Model model, String sort, String order) {
+        List<Dict> nyList = Lists.newArrayList();
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+        c.add(Calendar.MONTH, 1);
+        for (int i = 0; i < 13; i++) {
+            c.add(Calendar.MONTH, -1);
+            String ny = sdf.format(c.getTime());
+            Dict d = new Dict();
+            d.setLabel(ny);
+            d.setValue(ny);
+            nyList.add(d);
+        }
+        model.addAttribute("ny", nyList);
+        /*User u = UserUtils.getUser();
+        condition.setC2(u.getOffice().getId());*/
+
+        return "modules/app/wxList";
+    }
+    @RequestMapping(value = "wxdGroupDwlist")
+    @ResponseBody
+    public String wxdGroupDwlist(Condition condition, Model model, String sort, String order){
+        List<HashMap> lsHt = gdzcMapper.getWxdshList(condition);
+        HashMap r = new HashMap();
+        r.put("rows", lsHt);
+        String jdata = JsonMapper.getInstance().toJson(r);
+        return jdata;
     }
 }
